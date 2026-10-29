@@ -214,20 +214,24 @@ Subcontas pós-pagas não têm verificação de saldo. Elas podem ter um limite 
 
 ## Subcontas pós-pagas: limite mensal (detailCode 021)
 
-Subcontas pós-pagas podem ter um **limite mensal de envios** configurado pela **MOBSIM**. O limite considera o total de SMS debitados da subconta no mês corrente (horário de Brasília), somando os envios pela API e pelas campanhas, e pode ser ampliado temporariamente, apenas para um mês específico, mediante solicitação à **Equipe de Suporte da MOBSIM**.
+Subcontas pós-pagas podem ter um **limite mensal de envios** configurado pela **MOBSIM**. O limite considera o total de SMS debitados da subconta no mês corrente (horário de Brasília), somando os envios pela API e pelas campanhas.
 
-Quando o total enviado no mês atinge o limite, as requisições seguintes são recusadas com **HTTP 400** e o <code>detailCode 021</code> até o início do mês seguinte. A requisição que ultrapassa o limite ainda é aceita e enviada. O bloqueio passa a valer a partir da próxima.
+Uma equipe da **MOBSIM** acompanha os limites e pode, por decisão própria, ampliá-los gradativamente conforme o volume de cada cliente.
 
-## Alertas por e-mail
+Quando o total enviado no mês atinge o limite, as requisições seguintes são recusadas com **HTTP 400** e o <code>detailCode 021</code> até o início do mês seguinte ou até que o limite seja ampliado. A requisição que ultrapassa o limite ainda é aceita e enviada. O bloqueio passa a valer a partir da próxima.
 
-Quando a subconta tem limite mensal, a **MOBSIM** envia alertas por e-mail aos **usuários ativos vinculados à subconta** e à equipe **MOBSIM**:
+## Alertas por E-mail
+
+Quando a subconta tem limite mensal, a **MOBSIM** envia alertas por E-mail aos **usuários ativos vinculados à subconta** e à equipe **MOBSIM**:
 
 Alerta | Quando é enviado | Efeito
 -|-|-
-80% | Na requisição que faz o total do mês atingir 80% do limite | Apenas aviso
-100% | Na requisição que faz o total do mês atingir 100% do limite | Aviso. As requisições seguintes do mês são recusadas com o <code>detailCode 021</code>
+80% | Na requisição que faz o total do mês atingir 80% do limite vigente | Apenas aviso
+100% | Na requisição que faz o total do mês atingir 100% do limite vigente | Aviso. As requisições seguintes são recusadas com o <code>detailCode 021</code> até o início do mês seguinte ou até que o limite seja ampliado
 
-Cada alerta é enviado **uma única vez por mês**. O e-mail informa o limite mensal, o total usado no mês e a quantidade ainda disponível. Se uma única requisição levar o total de menos de 80% direto para 100% ou mais, só o alerta de 100% é enviado.
+O E-mail informa o limite mensal, o total usado no mês e a quantidade ainda disponível. Se uma única requisição levar o total de menos de 80% direto para 100% ou mais, só o alerta de 100% é enviado.
+
+Os alertas são enviados sempre que o total do mês atinge 80% ou 100% do **limite vigente**. Se o limite for ampliado depois de um alerta, novos alertas são enviados quando a subconta atingir 80% ou 100% do novo limite. Se, no momento da ampliação, o total já estiver acima de 80% do novo limite, só o alerta de 100% será enviado. Assim, a mesma subconta pode receber mais de um alerta de cada tipo no mesmo mês.
 
 # Resposta
 
