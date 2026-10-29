@@ -24,7 +24,7 @@ Resumo do fluxo:
 
 # Autenticação
 
-Todas as requisições à **API SMS** devem incluir uma chave de acesso gerada no momento da criação da subconta no sistema da **MOBSIM**. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial para obter suas credenciais (contato@mobsim.com.br).
+Todas as requisições à **API SMS** devem incluir uma chave de acesso gerada no momento da criação da conta no sistema da **MOBSIM**. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial para obter suas credenciais (suporte@mobsim.com.br).
 
 A chave de acesso deve ser enviada no header `Authorization`, precedida de `Basic `, exatamente como foi fornecida:
 
@@ -35,9 +35,9 @@ Erros de autenticação retornam **HTTP 401** e recusam a requisição inteira:
 Situação | Resposta
 -|-
 Chave de acesso inválida | HTTP 401, <code>statusCode 02</code> e <code>detailCode 017</code>
-Subconta inativa | HTTP 401, <code>statusCode 02</code> e <code>detailCode 018</code>
-Subconta excluída | HTTP 401, <code>statusCode 02</code> e <code>detailCode 019</code>
-API inativa para a subconta | HTTP 401, <code>statusCode 02</code> e <code>detailCode 020</code>
+Conta inativa | HTTP 401, <code>statusCode 02</code> e <code>detailCode 018</code>
+Conta excluída | HTTP 401, <code>statusCode 02</code> e <code>detailCode 019</code>
+API inativa para a conta | HTTP 401, <code>statusCode 02</code> e <code>detailCode 020</code>
 Header <code>Authorization</code> ausente | HTTP 401 com uma mensagem de texto, **sem** <code>statusCode</code> e <code>detailCode</code>
 
 # Headers
@@ -176,7 +176,7 @@ O limite é verificado **depois** da limpeza de caracteres e **já com** o texto
 
 ## Mensagens concatenadas (até 480 caracteres)
 
-É possível enviar SMS com até **480 caracteres**. Para isso é necessário solicitar uma configuração específica na sua subconta. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial (contato@mobsim.com.br).
+É possível enviar SMS com até **480 caracteres**. Para isso é necessário solicitar uma configuração específica na sua conta. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial (suporte@mobsim.com.br).
 
 Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para identificar as partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos exibam as partes como uma única mensagem.
 
@@ -198,36 +198,40 @@ Recomendamos revisar o texto antes do envio para que a remoção de caracteres n
 
 ## Opt-out
 
-Se a sua subconta estiver configurada com **opt-out**, o texto <code> (Envie PARE p/Sair)</code> (20 caracteres, incluindo o espaço inicial) é adicionado ao fim de cada mensagem.
+Se a sua conta estiver configurada com **opt-out**, o texto <code> (Envie PARE p/Sair)</code> (20 caracteres, incluindo o espaço inicial) é adicionado ao fim de cada mensagem.
 
-Esse texto **conta no limite de caracteres**. Na prática, o limite disponível para o seu texto passa a ser de **140 caracteres** (ou **460**, em subcontas com mensagens concatenadas).
+Esse texto **conta no limite de caracteres**. Na prática, o limite disponível para o seu texto passa a ser de **140 caracteres** (ou **460**, em contas com mensagens concatenadas).
 
 # Saldo e Limite Mensal
 
-## Subcontas pré-pagas: saldo (detailCode 014)
+## Contas pré-pagas: saldo (detailCode 014)
 
-A verificação de saldo vale **somente para subcontas pré-pagas**. O saldo disponível precisa ser maior ou igual à quantidade de mensagens da requisição. Caso contrário, a requisição inteira é recusada com **HTTP 400** e o <code>detailCode 014</code>, e nenhuma mensagem é enviada.
+A verificação de saldo vale **somente para contas pré-pagas**. O saldo disponível precisa ser maior ou igual à quantidade de mensagens da requisição. Caso contrário, a requisição inteira é recusada com **HTTP 400** e o <code>detailCode 014</code>, e nenhuma mensagem é enviada.
 
 Somente as mensagens enviadas (<code>detailCode 001</code>) são debitadas do saldo. Mensagens concatenadas debitam uma unidade por parte.
 
-Subcontas pós-pagas não têm verificação de saldo. Elas podem ter um limite mensal, descrito a seguir.
+Contas pós-pagas não têm verificação de saldo. Elas podem ter um limite mensal, descrito a seguir.
 
-## Subcontas pós-pagas: limite mensal (detailCode 021)
+## Contas pós-pagas: limite mensal (detailCode 021)
 
-Subcontas pós-pagas podem ter um **limite mensal de envios** configurado pela **MOBSIM**. O limite considera o total de SMS debitados da subconta no mês corrente (horário de Brasília), somando os envios pela API e pelas campanhas, e pode ser ampliado temporariamente, apenas para um mês específico, mediante solicitação à **Equipe de Suporte da MOBSIM**.
+Contas pós-pagas podem ter um **limite mensal de envios** configurado pela **MOBSIM**. O limite considera o total de SMS debitados da conta no mês corrente (horário de Brasília), somando os envios pela API e pelas campanhas.
 
-Quando o total enviado no mês atinge o limite, as requisições seguintes são recusadas com **HTTP 400** e o <code>detailCode 021</code> até o início do mês seguinte. A requisição que ultrapassa o limite ainda é aceita e enviada. O bloqueio passa a valer a partir da próxima.
+Uma equipe da **MOBSIM** acompanha os limites e pode, por decisão própria, ampliá-los gradativamente conforme o volume de cada cliente.
 
-## Alertas por e-mail
+Quando o total enviado no mês atinge o limite, as requisições seguintes são recusadas com **HTTP 400** e o <code>detailCode 021</code> até o início do mês seguinte ou até que o limite seja ampliado. A requisição que ultrapassa o limite ainda é aceita e enviada. O bloqueio passa a valer a partir da próxima.
 
-Quando a subconta tem limite mensal, a **MOBSIM** envia alertas por e-mail aos **usuários ativos vinculados à subconta** e à equipe **MOBSIM**:
+## Alertas por E-mail
+
+Quando a conta tem limite mensal, a **MOBSIM** envia alertas por E-mail aos **usuários ativos vinculados à conta** e à equipe **MOBSIM**:
 
 Alerta | Quando é enviado | Efeito
 -|-|-
-80% | Na requisição que faz o total do mês atingir 80% do limite | Apenas aviso
-100% | Na requisição que faz o total do mês atingir 100% do limite | Aviso. As requisições seguintes do mês são recusadas com o <code>detailCode 021</code>
+80% | Na requisição que faz o total do mês atingir 80% do limite vigente | Apenas aviso
+100% | Na requisição que faz o total do mês atingir 100% do limite vigente | Aviso. As requisições seguintes são recusadas com o <code>detailCode 021</code> até o início do mês seguinte ou até que o limite seja ampliado
 
-Cada alerta é enviado **uma única vez por mês**. O e-mail informa o limite mensal, o total usado no mês e a quantidade ainda disponível. Se uma única requisição levar o total de menos de 80% direto para 100% ou mais, só o alerta de 100% é enviado.
+O E-mail informa o limite mensal, o total usado no mês e a quantidade ainda disponível. Se uma única requisição levar o total de menos de 80% direto para 100% ou mais, só o alerta de 100% é enviado.
+
+Os alertas são enviados sempre que o total do mês atinge 80% ou 100% do **limite vigente**. Se o limite for ampliado depois de um alerta, novos alertas são enviados quando a conta atingir 80% ou 100% do novo limite. Se, no momento da ampliação, o total já estiver acima de 80% do novo limite, só o alerta de 100% será enviado. Assim, a mesma conta pode receber mais de um alerta de cada tipo no mesmo mês.
 
 # Resposta
 
@@ -329,14 +333,14 @@ Code | Descrição | Significado | Nível | HTTP
 011 | Não Enviado | Key1 excedido | Mensagem | 200
 012 | Não Enviado | Key2 excedido | Mensagem | 200
 013 | Não Enviado | Key3 excedido | Mensagem | 200
-014 | Não Enviado | Não há saldo suficiente (subcontas pré-pagas) | Requisição | 400
+014 | Não Enviado | Não há saldo suficiente (contas pré-pagas) | Requisição | 400
 015 | Não Enviado | Limite de 1.000 mensagens por requisição excedido | Requisição | 400
 016 | Não Enviado | Nenhuma mensagem na requisição (lista <code>messages</code> vazia) | Requisição | 400
 017 | Não Enviado | Chave de acesso inválida | Requisição | 401
-018 | Não Enviado | Subconta inativa | Requisição | 401
-019 | Não Enviado | Subconta permanentemente excluída | Requisição | 401
+018 | Não Enviado | Conta inativa | Requisição | 401
+019 | Não Enviado | Conta permanentemente excluída | Requisição | 401
 020 | Não Enviado | API inativa | Requisição | 401
-021 | Não Enviado | Limite mensal de envios atingido (subcontas pós-pagas) | Requisição | 400
+021 | Não Enviado | Limite mensal de envios atingido (contas pós-pagas) | Requisição | 400
 999 | Blacklist | Mensagem bloqueada | Mensagem | 200
 
 Se todos os números de uma requisição forem inválidos, a requisição é aceita (HTTP 200) e cada mensagem recebe o <code>detailCode 002</code>. O <code>detailCode 016</code> só é usado quando a lista <code>messages</code> está vazia.
@@ -456,7 +460,7 @@ Veja as seções **Requisição**, **Resposta** e **Tabela de Códigos** para as
 
 A **API SMS** da **MOBSIM** pode realizar *callbacks* diretamente para o seu sistema, retornando os status de entrega das mensagens enviadas ou os SMS respondidos (MO) pelos seus usuários.
 
-Para receber os *callbacks*, é necessário configurar uma URL (*endpoint*) no sistema da **MOBSIM**. Solicite essa configuração para a **Equipe de Suporte da MOBSIM** ou ao seu Gerente Comercial (contato@mobsim.com.br).
+Para receber os *callbacks*, configure os *webhooks* (as URLs do seu sistema que vão receber os dados) diretamente na sua conta no sistema da **MOBSIM**. A configuração é feita por você, sem necessidade de solicitar ao Suporte ou ao Gerente Comercial.
 
 ## Callback de Status
 
