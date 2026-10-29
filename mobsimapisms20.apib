@@ -7,112 +7,303 @@ Bem-vindo à documentação da **API SMS** da **MOBSIM**!
 
 Com ela você pode enviar SMS para todas as operadoras brasileiras, em todo o território nacional, e receber status de entrega e respostas dos usuários (MO) de forma automatizada.
 
-A **API** da **MOBSIM** suporta o formato **REST**:
+# Visão Geral
 
-A sua programação ou o seu sistema deve realizar uma requisição para a URL **https://mobsim-api.com.br/sms**, enviando os parâmetros por meio de POST. O retorno para cada requisição será um JSON cujo formato é detalhado ao longo desta documentação.
+A **API** da **MOBSIM** segue o formato **REST**. Todo envio é feito por uma única chamada:
+
+<pre><code>POST https://mobsim-api.com.br/sms</code></pre>
+
+Em cada chamada você envia de **1 a 1.000 mensagens** em um JSON. A **API** valida cada mensagem individualmente e devolve, também em JSON, o resultado de cada uma.
+
+Resumo do fluxo:
+
+1. Sua aplicação envia a requisição com a chave de acesso no header `Authorization`.
+2. A **API** valida a requisição como um todo (autenticação, quantidade de mensagens, `groupId`, saldo e limite mensal). Se alguma dessas validações falhar, **nenhuma mensagem é enviada** e a resposta traz o erro no campo `header`.
+3. Se a requisição for aceita, cada mensagem é validada separadamente. As mensagens válidas são enviadas, e as inválidas são recusadas sem impedir o envio das demais. O resultado de cada mensagem vem no campo `messages`.
+4. Depois do envio, a **MOBSIM** pode chamar a sua aplicação com os status de entrega e as respostas dos usuários (veja **Callbacks da API**).
 
 # Autenticação
 
 Todas as requisições à **API SMS** devem incluir uma chave de acesso gerada no momento da criação da subconta no sistema da **MOBSIM**. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial para obter suas credenciais (contato@mobsim.com.br).
 
-A chave de acesso deve ser fornecida conforme o exemplo a seguir:
+A chave de acesso deve ser enviada no header `Authorization`, precedida de `Basic `, exatamente como foi fornecida:
 
-<pre><code>Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</code></pre>
+<pre><code>Authorization: Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</code></pre>
 
-**Importante**: Caso haja erro na autenticação, será retornado o <code>status code 02</code> e o <code>detail code 017</code>.
+Erros de autenticação retornam **HTTP 401** e recusam a requisição inteira:
 
-# Header
+Situação | Resposta
+-|-
+Chave de acesso inválida | HTTP 401, <code>statusCode 02</code> e <code>detailCode 017</code>
+Subconta inativa | HTTP 401, <code>statusCode 02</code> e <code>detailCode 018</code>
+Subconta excluída | HTTP 401, <code>statusCode 02</code> e <code>detailCode 019</code>
+API inativa para a subconta | HTTP 401, <code>statusCode 02</code> e <code>detailCode 020</code>
+Header <code>Authorization</code> ausente | HTTP 401 com uma mensagem de texto, **sem** <code>statusCode</code> e <code>detailCode</code>
+
+# Headers
 
 Todas as requisições devem incluir, além do cabeçalho de autenticação, os seguintes headers:
 
-<pre><code>Content-Type:application/json
-Accept:application/json</code></pre>
+<pre><code>Content-Type: application/json
+Accept: application/json</code></pre>
 
-# Identificadores de SMS
+Se o <code>Content-Type</code> não for <code>application/json</code>, a requisição é recusada (veja **Respostas Fora do Padrão**).
+
+# Requisição
+
+## Estrutura
+
+A requisição é um objeto **JSON** com uma lista de mensagens. É possível enviar uma mensagem diferente para cada número ou a mesma mensagem para vários números.
+
+<pre><code>{
+    "groupId": "90f93d5c-6ad1-44af",
+    "groupMsg": "",
+    "messages": [
+        {
+            "id": "90f93d5c-6ad1-44af",
+            "to": "11988776655",
+            "msg": "Mensagem da MOBSIM 1",
+            "code": "MeuID_20-05-2018_1",
+            "key1": "41177319923"
+        },
+        {
+            "id": "90f93d5c-6ad1-77af",
+            "to": "11988776644",
+            "msg": "Mensagem da MOBSIM 2",
+            "code": "MeuID_20-05-2018_2",
+            "key1": "41177319923"
+        }
+    ]
+}</code></pre>
+
+## Campos
+
+Campo | Tipo | Obrigatório | Limite | Descrição
+-|-|-|-|-
+<code>groupId</code> | string | Não | 100 caracteres | Identificador da requisição. Deve ser único.
+<code>groupMsg</code> | string | Não* | 160 ou 480 caracteres | Mensagem padrão, usada nas mensagens que vierem sem <code>msg</code>.
+<code>messages</code> | array | Sim | 1 a 1.000 itens | Lista de mensagens a enviar.
+<code>messages[].id</code> | string | Sim | 100 caracteres | Identificador único da mensagem.
+<code>messages[].to</code> | string | Sim | — | Número do celular do destinatário (veja **Números de Telefone**).
+<code>messages[].msg</code> | string | Não* | 160 ou 480 caracteres | Texto da mensagem (veja **Mensagens**).
+<code>messages[].code</code> | string | Não | 100 caracteres | Campo livre para controle interno.
+<code>messages[].key1</code> | string | Não | 100 caracteres | Campo livre para controle interno.
+<code>messages[].key2</code> | string | Não | 100 caracteres | Campo livre para controle interno.
+<code>messages[].key3</code> | string | Não | 100 caracteres | Campo livre para controle interno.
+
+\* Cada mensagem precisa ter texto: ou o seu próprio <code>msg</code>, ou o <code>groupMsg</code> da requisição.
+
+## Erros de validação
+
+Há dois níveis de erro:
+
++ **Erros da requisição:** recusam a chamada inteira, retornam **HTTP 400** ou **HTTP 401** e trazem o código no campo `header`. Nenhuma mensagem é enviada.
++ **Erros da mensagem:** recusam só aquela mensagem. A chamada é aceita com **HTTP 200**, as demais mensagens são enviadas normalmente e o código da mensagem recusada vem no item correspondente de `messages`.
+
+Campo | Problema | Nível | Código
+-|-|-|-
+<code>messages</code> | Lista vazia | Requisição (HTTP 400) | <code>016</code>
+<code>messages</code> | Mais de 1.000 itens | Requisição (HTTP 400) | <code>015</code>
+<code>groupId</code> | Mais de 100 caracteres | Requisição (HTTP 400) | <code>008</code>
+<code>groupId</code> | Já usado anteriormente | Requisição (HTTP 400) | <code>009</code>
+<code>id</code> | Vazio | Mensagem (HTTP 200) | <code>007</code>
+<code>id</code> | Mais de 100 caracteres | Mensagem (HTTP 200) | <code>006</code>
+<code>id</code> | Repetido na requisição ou já usado anteriormente | Mensagem (HTTP 200) | <code>005</code>
+<code>to</code> | Número inválido | Mensagem (HTTP 200) | <code>002</code>
+<code>to</code> | Número na blacklist | Mensagem (HTTP 200) | <code>999</code>
+<code>msg</code> | Vazia e sem <code>groupMsg</code> | Mensagem (HTTP 200) | <code>004</code>
+<code>msg</code> | Acima do limite de caracteres | Mensagem (HTTP 200) | <code>003</code>
+<code>code</code> | Mais de 100 caracteres | Mensagem (HTTP 200) | <code>010</code>
+<code>key1</code> | Mais de 100 caracteres | Mensagem (HTTP 200) | <code>011</code>
+<code>key2</code> | Mais de 100 caracteres | Mensagem (HTTP 200) | <code>012</code>
+<code>key3</code> | Mais de 100 caracteres | Mensagem (HTTP 200) | <code>013</code>
+
+**Importante**: Todas as mensagens precisam ter o campo <code>to</code>. Uma mensagem sem <code>to</code> faz a requisição inteira falhar (veja **Respostas Fora do Padrão**).
+
+## Identificadores
 
 + **ID (Identificador Único de SMS)**
 
-É obrigatório a utilização do parâmetro **ID** como um identificador único de SMS. O **ID** está vinculado ao número enviado dentro do sistema da **MOBSIM** e será utilizado para vincular os status dos SMS, as respostas dos usuários (MO) e proteção contra envios duplicados.
+O <code>id</code> é obrigatório. Ele fica vinculado ao número enviado dentro do sistema da **MOBSIM** e é usado para vincular os status dos SMS, as respostas dos usuários (MO) e para proteger contra envios duplicados.
 
-Restringimos em **100 caracteres** o limite do <code>id</code>. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o <code>detail code 006</code>.
+É proibido usar um <code>id</code> que já tenha sido usado, seja na mesma requisição ou em uma requisição anterior. Recomendamos usar [GUID](https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global) para gerar IDs únicos. Mensagens com <code>id</code> duplicado recebem o <code>detailCode 005</code>, e as demais mensagens da chamada são enviadas normalmente.
 
-**Importante**: É proibida a utilização de um **ID** que já tenha sido utilizado uma vez, por isso recomendamos utilizar [GUID](https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global) para gerar IDs únicos. Se o ID estiver duplicado será retornado o <code>status code 02</code> e o <code>detail code 005</code>.
++ **GroupID (Identificador da Requisição)**
 
-+ **GroupID (Identificador de Chamadas)**
+O <code>groupId</code> é opcional. Ele serve para identificar e agrupar requisições.
 
-A utilização do parâmetro **GroupID** para identificação de requisições é opcional. Ele serve para identificar e agrupar várias requisições distintas.
+É proibido usar um <code>groupId</code> que já tenha sido usado. Recomendamos usar [GUID](https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global). Se o <code>groupId</code> estiver duplicado, a requisição inteira é recusada com o <code>detailCode 009</code>. Se tiver mais de 100 caracteres, é recusada com o <code>detailCode 008</code>.
 
-Restringimos em **100 caracteres** o limite do <code>groupId</code>. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o <code>detail code 009</code>.
++ **Code e Key (Identificadores Próprios)**
 
-**Importante**: É proibida a utilização de um **GroupID** que já tenha sido usado uma vez, por isso recomendamos utilizar [GUID](https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global) para gerar GroupIDs únicos. Se o GroupID estiver duplicado será retornado o <code>status code 02</code> e o <code>detail code 008</code>.
+Os campos <code>code</code>, <code>key1</code>, <code>key2</code> e <code>key3</code> são opcionais e podem ser preenchidos com códigos, IDs, chaves e outras informações para controle interno. Eles são devolvidos nos *callbacks* de status e de respostas (MO) (veja **Callbacks da API**).
 
-+ **CODE e KEY (Identificador Próprio)**
+O limite é de 100 caracteres por campo. Se ultrapassado, só a mensagem afetada é recusada, com o <code>detailCode</code> 010, 011, 012 ou 013.
 
-Os parâmetros **Code** e **Key** são campos extras que podem ser preenchidos com códigos, IDs, chaves e outras informações diversas para controle interno. Esses parâmetros são disponibilizados nos *callbacks* de retornos de status e respostas (MO) de forma automatizada (veja “Métodos da API” no final da documentação).
++ **groupMsg (Mensagem Padrão)**
 
-Ao todo são quatro parâmetros: <code>Code</code>, <code>Key1</code>, <code>Key2</code> e <code>Key3</code>.
+O <code>groupMsg</code> replica a mesma mensagem para todos os números da lista. Mensagens que vierem com o <code>msg</code> vazio usam o texto do <code>groupMsg</code>. Se as duas forem preenchidas, vale o <code>msg</code> da mensagem.
 
-Restringimos em **100 caracteres** o limite desses parâmetros. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o(s) <code>detail code 010, 011, 012 e 013</code>.
+# Números de Telefone
 
-# Restrições
+## Formato aceito
 
-+ **Requisições Simultâneas**
+Envie o número no formato **DDD + número** (ex.: <code>11988776655</code>). O DDI (<code>55</code>) e o nono dígito (<code>9</code>) são opcionais, pois o sistema da **MOBSIM** os inclui automaticamente.
 
-Solicitamos que sejam feitas, no máximo, **10 requisições simultâneas** (*threads*) para a aplicação da **MOBSIM** com um espaçamento de **10 segundos por requisição**.
+O número pode vir com máscara: espaços, parênteses, hífens, <code>+</code> e zeros à esquerda são ignorados. Por exemplo, <code>(11) 98877-6655</code>, <code>+55 11 98877-6655</code> e <code>011988776655</code> são tratados como <code>5511988776655</code>.
 
-+ **Limite de Números por Requisição**
+A resposta devolve no campo <code>to</code> o número já normalizado, com 13 dígitos (<code>55</code> + DDD + 9 + número).
 
-Restringimos que cada requisição tenha, no máximo, **500 números**. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o <code>detail code 015</code>.
+## Números recusados
 
-+ **ID**
+Somente **celulares brasileiros** são aceitos. São recusados com o <code>detailCode 002</code>:
 
-Restringimos o uso de <code>id</code> duplicados, isto é, que já tenham sido utilizados via API uma primeira vez. 
++ números que, depois da normalização, não tenham 13 dígitos;
++ números com DDI diferente de <code>55</code>;
++ **telefones fixos**;
++ números com **falsos DDDs**, ou seja, DDDs que não existem no Brasil: 10, 20, 23, 25, 26, 29, 30, 36, 39, 40, 50, 52, 56, 57, 58, 59, 60, 70, 72, 76, 78, 80 e 90;
++ números em que todos os dígitos depois do DDD e do nono dígito são iguais (ex.: <code>11999999999</code>).
 
-Caso o sistema detecte mensagens com <code>id</code> duplicados, a chamada será aceita, porém todas as mensagens duplicadas apresentarão o código <code>status code 02</code> e o <code>detail code 005</code> (vide tabela de códigos abaixo). 
+**Importante**: Os números recusados com o <code>detailCode 002</code> não são tarifados.
 
-+ **GroupID**
+# Mensagens
 
-Restringimos o uso de <code>GroupID</code> duplicados, isto é, que já tenham sido utilizados via API uma primeira vez. 
+## Limite de caracteres
 
-Caso o sistema detecte requisições com <code>GroupID</code> duplicado, será apresentado o código <code>status code 02</code> e o <code>detail code 008</code> (vide tabela de códigos abaixo). 
+O padrão SMS (“*Short Message Service*”) suporta até **160 caracteres**. Mensagens acima desse limite são recusadas com o <code>detailCode 003</code>.
 
-+ **Caractere Excedido**
+O limite é verificado **depois** da limpeza de caracteres e **já com** o texto de opt-out, quando houver (veja abaixo).
 
-Restringimos em **100 caracteres** o limite dos parâmetros: <code>ID</code>, <code>GroupID</code>, <code>Code</code>, <code>Key1</code>, <code>Key2</code> e <code>Key3</code>. Caso esse limite seja ultrapassado, o erro <code>400 Bad Request</code> será apresentado e a requisição será rejeitada.
+## Mensagens concatenadas (até 480 caracteres)
 
-# Formatação dos Números
+É possível enviar SMS com até **480 caracteres**. Para isso é necessário solicitar uma configuração específica na sua subconta. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial (contato@mobsim.com.br).
 
-+ **Número Válido**
+Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para identificar as partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos exibam as partes como uma única mensagem.
 
-Para que um número seja considerado válido, ele precisa seguir a seguinte estrutura: “DDD” + “NÚMERO”. (Ex: 1198980202). É opcional a inclusão do DDI (“55”) e Nono Dígito (“9”), pois o sistema da **MOBSIM** inclui essas informações automaticamente.
+Como o particionamento é feito no último espaço (as palavras não são cortadas), uma parte pode ter menos de 152 caracteres.
 
-+ **Números Inválidos**
+A requisição é idêntica à de mensagens curtas. Basta enviar o texto longo no campo <code>msg</code>.
 
-Qualquer estrutura de número que não siga a recomendação anterior, será apresentado o código <code>status code 02</code> e o <code>detail code 002</code> (vide tabela de códigos abaixo).
+**Importante**: Cada parte da mensagem é tarifada como 1 SMS.
 
-**Importante**: Os números inválidos que receberem o código <code>detail code 002</code> não serão tarifados.
+## Caracteres aceitos
 
-# Estrutura das Mensagens
+O texto da mensagem passa por uma limpeza automática antes do envio:
 
-+ **Limite de 160 caracteres por mensagem**
++ **Mantidos:** letras sem acento (A–Z, a–z), números (0–9), espaço e os símbolos `$ @ _ ! " # % & ' ( ) * + , - . / : ; < = > ?`
++ **Trocados pela letra sem acento:** á à â ã ä å, é è ê, í ì, ó ò ô õ ö, ú ù ü, ç e ñ, em maiúsculas e minúsculas (ex.: “Promoção” vira “Promocao”).
++ **Removidos sem aviso:** qualquer outro caractere, como quebras de linha, tabulações, emojis, `[`, `]`, `{`, `}`, `\`, `|`, `~`, `^`, `` ` ``, <code>€</code>, <code>º</code>, <code>ª</code> e letras com outros acentos (ë, ï, î, û).
 
-O padrão SMS (“*Short Message Service*”) suporta até 160 caracteres. Se alguma mensagem ultrapassar esse limite será apresentado o código <code>status code 02</code> e o <code>detail code 003</code> (vide tabela de códigos abaixo).
+Recomendamos revisar o texto antes do envio para que a remoção de caracteres não altere o sentido da mensagem.
 
-+ **Mensagens Concatenadas – até 480 caracteres**
+## Opt-out
 
-É possível enviar SMS com mais de 160 caracteres, para tanto será necessário solicitar uma configuração específica em sua subconta no sistema da **MOBSIM**. Consulte a **Equipe de Suporte da MOBSIM** ou o seu Gerente Comercial (contato@mobsim.com.br).
+Se a sua subconta estiver configurada com **opt-out**, o texto <code> (Envie PARE p/Sair)</code> (20 caracteres, incluindo o espaço inicial) é adicionado ao fim de cada mensagem.
 
-Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para que seja feita a identificação das partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos interpretem como uma única mensagem.
+Esse texto **conta no limite de caracteres**. Na prática, o limite disponível para o seu texto passa a ser de **140 caracteres** (ou **460**, em subcontas com mensagens concatenadas).
 
-Além disso, como o particionamento das mensagens será realizado no último caractere de espaço, ou seja, palavras não serão truncadas, a mensagem pode ser particionada com menos de 152 caracteres.
+# Saldo e Limite Mensal
 
-Para esse tipo de envio a requisição será idêntica a requisição de envio de mensagens curtas. Basta enviar o texto da mensagem longa no parâmetro <code>msg</code> com mais de 160 caracteres.
+## Subcontas pré-pagas: saldo (detailCode 014)
 
-**Importante**: Lembrando que cada parte do SMS será tarifado 1 SMS adicional.
+A verificação de saldo vale **somente para subcontas pré-pagas**. O saldo disponível precisa ser maior ou igual à quantidade de mensagens da requisição. Caso contrário, a requisição inteira é recusada com **HTTP 400** e o <code>detailCode 014</code>, e nenhuma mensagem é enviada.
+
+Somente as mensagens enviadas (<code>detailCode 001</code>) são debitadas do saldo. Mensagens concatenadas debitam uma unidade por parte.
+
+Subcontas pós-pagas não têm verificação de saldo. Elas podem ter um limite mensal, descrito a seguir.
+
+## Subcontas pós-pagas: limite mensal (detailCode 021)
+
+Subcontas pós-pagas podem ter um **limite mensal de envios** configurado pela **MOBSIM**. O limite considera o total de SMS debitados da subconta no mês corrente (horário de Brasília), somando os envios pela API e pelas campanhas, e pode ser ampliado temporariamente, apenas para um mês específico, mediante solicitação à **Equipe de Suporte da MOBSIM**.
+
+Quando o total enviado no mês atinge o limite, as requisições seguintes são recusadas com **HTTP 400** e o <code>detailCode 021</code> até o início do mês seguinte. A requisição que ultrapassa o limite ainda é aceita e enviada. O bloqueio passa a valer a partir da próxima.
+
+## Alertas por e-mail
+
+Quando a subconta tem limite mensal, a **MOBSIM** envia alertas por e-mail aos **usuários ativos vinculados à subconta** e à equipe **MOBSIM**:
+
+Alerta | Quando é enviado | Efeito
+-|-|-
+80% | Na requisição que faz o total do mês atingir 80% do limite | Apenas aviso
+100% | Na requisição que faz o total do mês atingir 100% do limite | Aviso. As requisições seguintes do mês são recusadas com o <code>detailCode 021</code>
+
+Cada alerta é enviado **uma única vez por mês**. O e-mail informa o limite mensal, o total usado no mês e a quantidade ainda disponível. Se uma única requisição levar o total de menos de 80% direto para 100% ou mais, só o alerta de 100% é enviado.
+
+# Resposta
+
+## Formato
+
+A resposta tem dois campos:
+
++ <code>header</code>: preenchido apenas quando a **requisição inteira** é recusada. Nesse caso, <code>messages</code> vem <code>null</code>.
++ <code>messages</code>: preenchido quando a requisição é aceita, com o resultado de **cada mensagem**, na mesma ordem do envio. Nesse caso, <code>header</code> vem <code>null</code>.
+
+Cada resultado traz <code>statusCode</code>, <code>statusDescription</code>, <code>detailCode</code> e <code>detailDescription</code> (veja **Tabela de Códigos**). Os itens de <code>messages</code> também trazem o número normalizado em <code>to</code>.
+
+O <code>detailCode 001</code> indica que a mensagem foi **aceita** pela **MOBSIM** para envio. O status de entrega no celular é informado depois, pelo *callback* de status.
+
+## Decodificação da resposta
+
+**Importante**: O corpo da resposta é uma **string JSON** que contém o JSON do resultado. Ou seja, o resultado vem codificado duas vezes, e a sua aplicação precisa decodificá-lo duas vezes.
+
+Corpo recebido:
+
+<pre><code>"{\"header\":null,\"messages\":[{\"to\":\"5511988776655\",\"statusCode\":\"01\",\"statusDescription\":\"Ok\",\"detailCode\":\"001\",\"detailDescription\":\"Enviado\"}]}"</code></pre>
+
+Resultado depois da segunda decodificação:
+
+<pre><code>{
+    "header": null,
+    "messages": [
+        {
+            "to": "5511988776655",
+            "statusCode": "01",
+            "statusDescription": "Ok",
+            "detailCode": "001",
+            "detailDescription": "Enviado"
+        }
+    ]
+}</code></pre>
+
+Exemplos de decodificação:
+
+<pre><code>// JavaScript
+const resultado = JSON.parse(JSON.parse(corpo));
+
+# Python
+resultado = json.loads(json.loads(corpo))
+
+// C# (Newtonsoft.Json)
+var json = JsonConvert.DeserializeObject&lt;string&gt;(corpo);
+var resultado = JsonConvert.DeserializeObject&lt;Resposta&gt;(json);</code></pre>
+
+## Códigos HTTP
+
+HTTP | Quando
+-|-
+200 | A requisição foi aceita. Confira o resultado de cada mensagem em <code>messages</code>: os erros de mensagem (<code>detailCode</code> 002 a 007, 010 a 013 e 999) também retornam 200.
+400 | A requisição foi recusada por um erro de validação: <code>detailCode</code> 008, 009, 014, 015, 016 ou 021. Também é usado quando o <code>Content-Type</code> não é JSON.
+401 | Falha de autenticação: <code>detailCode</code> 017, 018, 019 ou 020, ou header <code>Authorization</code> ausente.
+500 | Erro inesperado (veja **Respostas Fora do Padrão**).
+
+# Respostas Fora do Padrão
+
+Nos casos abaixo, a resposta **não** segue o formato com <code>header</code> e <code>messages</code>. O corpo é apenas uma mensagem de texto, ou vem vazio:
+
+Situação | Resposta
+-|-
+<code>Content-Type</code> diferente de <code>application/json</code> | HTTP 400 com o texto `"Invalid content type"`
+Header <code>Authorization</code> ausente | HTTP 401 com uma mensagem de texto
+Header <code>Content-Type</code> ausente | HTTP 500 com uma mensagem de texto
+Alguma mensagem sem o campo <code>to</code> | HTTP 500 com uma mensagem de texto. Nenhuma mensagem da requisição é enviada
+Corpo vazio ou JSON inválido | Erro HTTP 5xx, sem o corpo padrão
+Falha interna no processamento ou no envio | HTTP 500 com uma mensagem de texto
+
+Em caso de erro 500, entre em contato com a **Equipe de Suporte da MOBSIM** antes de reenviar, informando o horário e o <code>groupId</code> da requisição, se houver.
 
 # Tabela de Códigos
 
-As requisições à **API** da **MOBSIM** retornarão dois tipos de código. O <code>statusCode</code> e o <code>detailCode</code>. A seguir, veja a lista de códigos fornecidos pela **API**:
+As respostas da **API** da **MOBSIM** trazem dois tipos de código: o <code>statusCode</code> e o <code>detailCode</code>.
 
 ## statusCode
 
@@ -123,35 +314,36 @@ Code | Descrição | Significado
 
 ## detailCode
 
-Code | Descrição | Significado
--|-|-
-001 | Enviado | A mensagem será enviada
-002 | Não Enviado | Número Inválido
-003 | Não Enviado | Caractere Excedido
-004 | Não Enviado | Mensagem Vazia
-005 | Não Enviado | ID duplicado
-006 | Não Enviado | ID excedido
-007 | Não Enviado | ID vazio
-008 | Não Enviado | GroupID excedido
-009 | Não Enviado | GroupID duplicado
-010 | Não Enviado | Code excedido
-011 | Não Enviado | Key1 excedido
-012 | Não Enviado | Key2 excedido
-013 | Não Enviado | Key3 excedido
-014 | Não Enviado | Não há saldo suficiente
-015 | Não Enviado | Limite de números excedido na requisição
-016 | Não Enviado | Não há números válidos na requisição
-017 | Não Enviado | Chave de acesso inválida
-018 | Não Enviado | Subconta inativa
-019 | Não Enviado | Subconta permanentemente excluída
-020 | Não Enviado | API inativa
-999 | Blacklist | Mensagem Bloqueada
+Code | Descrição | Significado | Nível | HTTP
+-|-|-|-|-
+001 | Enviado | A mensagem será enviada | Mensagem | 200
+002 | Não Enviado | Número inválido | Mensagem | 200
+003 | Não Enviado | Caractere excedido | Mensagem | 200
+004 | Não Enviado | Mensagem vazia | Mensagem | 200
+005 | Não Enviado | ID duplicado | Mensagem | 200
+006 | Não Enviado | ID excedido | Mensagem | 200
+007 | Não Enviado | ID vazio | Mensagem | 200
+008 | Não Enviado | GroupID excedido | Requisição | 400
+009 | Não Enviado | GroupID duplicado | Requisição | 400
+010 | Não Enviado | Code excedido | Mensagem | 200
+011 | Não Enviado | Key1 excedido | Mensagem | 200
+012 | Não Enviado | Key2 excedido | Mensagem | 200
+013 | Não Enviado | Key3 excedido | Mensagem | 200
+014 | Não Enviado | Não há saldo suficiente (subcontas pré-pagas) | Requisição | 400
+015 | Não Enviado | Limite de 1.000 mensagens por requisição excedido | Requisição | 400
+016 | Não Enviado | Nenhuma mensagem na requisição (lista <code>messages</code> vazia) | Requisição | 400
+017 | Não Enviado | Chave de acesso inválida | Requisição | 401
+018 | Não Enviado | Subconta inativa | Requisição | 401
+019 | Não Enviado | Subconta permanentemente excluída | Requisição | 401
+020 | Não Enviado | API inativa | Requisição | 401
+021 | Não Enviado | Limite mensal de envios atingido (subcontas pós-pagas) | Requisição | 400
+999 | Blacklist | Mensagem bloqueada | Mensagem | 200
+
+Se todos os números de uma requisição forem inválidos, a requisição é aceita (HTTP 200) e cada mensagem recebe o <code>detailCode 002</code>. O <code>detailCode 016</code> só é usado quando a lista <code>messages</code> está vazia.
 
 # Tabela de Status
 
-Abaixo está a relação dos status que os números enviados para as operadoras apresentam. Estes status são fornecidos exclusivamente pelas operadoras e repassados pela **MOBSIM**:
-
-## Status do SMS
+Abaixo está a relação dos status que os números enviados para as operadoras apresentam. Estes status são fornecidos exclusivamente pelas operadoras e repassados pela **MOBSIM** no *callback* de status:
 
 Status | Descrição
 -|-
@@ -160,13 +352,11 @@ Enviado | Operadora não disponibiliza confirmação de entrega (isto não quer 
 Falha | SMS não recebido pelo celular do destinatário. Dentre os motivos para não entrega estão: número incorreto, celular desligado, celular inativo, indisponível ou fora da área de cobertura da operadora, conta bloqueada ou cancelada, problemas na operadora durante a entrega, indisponibilidade ou problema na rede da operadora, etc.
 Blacklist | Números bloqueados na lista interna do sistema.
 
-# Group Métodos da API
+# Limites de Uso
 
-## Envio Múltiplo de SMS [/sms]
++ **Requisições Simultâneas**
 
-### Testar envio de SMS Múltiplo [POST]
-
-Faça o envio de 1 ou até 1.000 SMS ao mesmo tempo utilizando o método de **Envios Múltiplos** da **API** da **MOBSIM**. 
+Solicitamos que sejam feitas, no máximo, **10 requisições simultâneas** (*threads*) para a aplicação da **MOBSIM** com um espaçamento de **10 segundos por requisição**.
 
 + **Velocidade e Capacidade de Envio**
 
@@ -176,161 +366,131 @@ Recomendamos que haja um espaçamento de 15 segundos a cada lote de 25 *threads*
 
 Chamadas individuais, com apenas 1 número por requisição, recomendamos que sejam feitas até 1.500 *threads* por minuto.
 
-+ **Estrutura da Requisição**
-
-Neste método é possível incluir uma mensagem diferente para cada número ou enviar a mesma mensagem para vários números ao mesmo tempo.
-
-Este método recebe um objeto **JSON** conforme o exemplo abaixo:
-
-<pre><code>
-        {
-            "groupId": "90f93d5c-6ad1-44af",
-            "groupMsg": "",
-            "messages": [
-            {
-                "id": "90f93d5c-6ad1-44af",
-                "code": "MeuID_20-05-2018_1",
-                "key1": "41177319923",
-                "to": "11988776655",
-                "msg": "Mensagem da MOBSIM 1"
-            },
-            {
-                "id": "90f93d5c-6ad1-77af",
-                "code": "MeuID_20-05-2018_2",
-                "key1": "41177319923",
-                "to": "11988776644",
-                "msg": "Mensagem da MOBSIM 2"
-            },
-            {
-                "id": "90f93d5c-6ad1-55af",
-                "code": "MeuID_20-05-2018_3",
-                "key1": "41177319923",
-                "to": "11988776633",
-                "msg": "Mensagem da MOBSIM 3"
-            }]
-        }
-<br/></pre></code>
-
-No corpo do **JSON**, no início da requisição, existem dois parâmetros opcionais que influenciam na lista de números. Confira a seguir:
-
-+ **Parâmetro "groupId"**
-
-A utilização do parâmetro <code>groupId</code> para identificação de requisições é opcional. Ele serve para identificar e agrupar várias requisições distintas.
-
-+ **Parâmetro "groupMsg"**
-
-O parâmetro <code>groupMsg</code> é o campo da mensagem do SMS. Este parâmetro serve para replicar a mesma mensagem a todos os números da lista. 
-
-Se os números da lista estiverem com o campo <code>msg</code> vazio, o sistema assumirá como padrão a mensagem armazenada neste parâmetro inicial. 
-
-Se ambos os parâmetros forem preenchidos, o sistema ignorará o parâmetro inicial e assumirá apenas os campos da lista.
-
 + **Tempo de Resposta da Requisição**
 
-O tempo de resposta de cada requisição varia conforme o fluxo de mensagens trafegados pela **MOBSIM**. Datas especiais, comemorativas ou horários de pico costumam ter um tempo maior de processamento das requisições.
+O tempo de resposta de cada requisição varia conforme o fluxo de mensagens trafegadas pela **MOBSIM**. Datas especiais, comemorativas ou horários de pico costumam ter um tempo maior de processamento das requisições.
 
-Embora o tempo médio possa variar entre 5 e 30 segundos, há casos que o tempo de resposta ultrapassa o tempo *default* de 60 segundos para *time-out*.
+Embora o tempo médio possa variar entre 5 e 30 segundos, há casos em que o tempo de resposta ultrapassa o tempo *default* de 60 segundos para *time-out*.
 
 Ou seja, o seu sistema precisa estar preparado para aguardar o nosso tempo de resposta. Solicitamos que seja configurado um *time-out* de até **300 segundos** (5 minutos) para retorno de cada requisição.
 
+# Group Métodos da API
 
-+ Attributes (object)
+## Envio Múltiplo de SMS [/sms]
 
-    + groupId: 95FG78HG6F26WS6D9F (string) - Identificador da lista. Deve ser um código único (GUID).
-    + groupMsg: Mensagem da MOBSIM (string) - Texto da mensagem a ser enviada para todos os números.
-    + id: 95FG78HG6F26WS6D9F (string) - Identificador da mensagem. Deve ser um código único (GUID).
-    + to: 11988776655 (number, required) - Número do celular do destinatário. É obrigatório DDD + número de celular.
-    + msg: Mensagem da MOBSIM (string, required) - Texto da mensagem a ser enviada para cada número.
+### Enviar SMS [POST]
+
+Envia de 1 a 1.000 SMS em uma única requisição. É possível incluir uma mensagem diferente para cada número ou enviar a mesma mensagem para vários números com o <code>groupMsg</code>.
+
+Veja as seções **Requisição**, **Resposta** e **Tabela de Códigos** para as regras completas.
 
 + Request (application/json)
 
-        {
+    + Headers
+
+            Authorization: Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D
+            Accept: application/json
+
+    + Attributes (object)
+        + groupId: `90f93d5c-6ad1-454af-90f93d5c` (string, optional) - Identificador único da requisição. Até 100 caracteres.
+        + groupMsg (string, optional) - Mensagem padrão, usada nas mensagens que vierem sem `msg`.
+        + messages (array, required) - De 1 a 1.000 mensagens.
+            + (object)
+                + id: `90f93d5c-6ad1-44af-90f93d5c` (string, required) - Identificador único da mensagem. Até 100 caracteres.
+                + to: `11988776655` (string, required) - Número do celular do destinatário: DDD + número.
+                + msg: `Mensagem da MOBSIM 1` (string, optional) - Texto da mensagem. Obrigatório se `groupMsg` não for enviado.
+                + code (string, optional) - Campo livre para controle interno. Até 100 caracteres.
+                + key1 (string, optional) - Campo livre para controle interno. Até 100 caracteres.
+                + key2 (string, optional) - Campo livre para controle interno. Até 100 caracteres.
+                + key3 (string, optional) - Campo livre para controle interno. Até 100 caracteres.
+
+    + Body
+
+            {
                 "groupId": "90f93d5c-6ad1-454af-90f93d5c",
                 "groupMsg": "",
                 "messages": [
-            {
-                "id": "90f93d5c-6ad1-44af-90f93d5c",
-                "to": "11988776655",
-                "msg": "Mensagem da MOBSIM 1"
-            },
-            {
-                "id": "90f93d5c-6ad1-77af-90f93d5c",
-                "to": "11988776644",
-                "msg": "Mensagem da MOBSIM 2"
-            },
-            {
-                "id": "90f93d5c-6ad1-55af-90f93d5c",
-                "to": "11988776633",
-                "msg": "Mensagem da MOBSIM 3"
-            }]
-        }
+                    {
+                        "id": "90f93d5c-6ad1-44af-90f93d5c",
+                        "to": "11988776655",
+                        "msg": "Mensagem da MOBSIM 1"
+                    },
+                    {
+                        "id": "90f93d5c-6ad1-77af-90f93d5c",
+                        "to": "1133334444",
+                        "msg": "Mensagem da MOBSIM 2"
+                    },
+                    {
+                        "id": "90f93d5c-6ad1-55af-90f93d5c",
+                        "to": "11988776633",
+                        "msg": "Mensagem da MOBSIM 3"
+                    }
+                ]
+            }
 
 + Response 200 (application/json)
 
-    + Headers
+    Requisição aceita. A primeira e a terceira mensagens foram aceitas para envio. A segunda foi recusada por ser um telefone fixo (<code>detailCode 002</code>). O corpo é uma string JSON que precisa ser decodificada duas vezes (veja **Decodificação da resposta**).
 
     + Body
-    
-            {
-                "StatusCode": 200,
-                "Headers": {
-                    "Content-Type": "application/json",
-                    "Access-Control-Allow-Origin": "*"
-            },
-                "Body": "\"{\\\"header\\\":null,\\\"messages\\\":[{\\\"to\\\":\\\"5511988776655\\\",\\\"statusCode\\\":\\\"01\\\",\\\"statusDescription\\\":\\\"Ok\\\",\\\"detailCode\\\":\\\"001\\\",\\\"detailDescription\\\":\\\"Enviado\\\"}]}\"",
-                "IsBase64Encoded": false
-            }
 
+            "{\"header\":null,\"messages\":[{\"to\":\"5511988776655\",\"statusCode\":\"01\",\"statusDescription\":\"Ok\",\"detailCode\":\"001\",\"detailDescription\":\"Enviado\"},{\"to\":\"5511933334444\",\"statusCode\":\"02\",\"statusDescription\":\"Falha\",\"detailCode\":\"002\",\"detailDescription\":\"Não enviado\"},{\"to\":\"5511988776633\",\"statusCode\":\"01\",\"statusDescription\":\"Ok\",\"detailCode\":\"001\",\"detailDescription\":\"Enviado\"}]}"
 
++ Response 400 (application/json)
 
+    Requisição recusada: mais de 1.000 mensagens (<code>detailCode 015</code>). Nenhuma mensagem foi enviada.
 
+    + Body
+
+            "{\"header\":{\"statusCode\":\"02\",\"statusDescription\":\"Falha\",\"detailCode\":\"015\",\"detailDescription\":\"Não enviado\"},\"messages\":null}"
+
++ Response 401 (application/json)
+
+    Requisição recusada: chave de acesso inválida (<code>detailCode 017</code>). Nenhuma mensagem foi enviada.
+
+    + Body
+
+            "{\"header\":{\"statusCode\":\"02\",\"statusDescription\":\"Falha\",\"detailCode\":\"017\",\"detailDescription\":\"Não enviado\"},\"messages\":null}"
 
 # Group Callbacks da API
 
-A **API SMS** da **MOBSIM** pode realizar *callbacks* diretamente para o seu sistema retornando os status de entrega das mensagens enviadas ou informações sobre os SMS respondidos (MO) de seus usuários.
+A **API SMS** da **MOBSIM** pode realizar *callbacks* diretamente para o seu sistema, retornando os status de entrega das mensagens enviadas ou os SMS respondidos (MO) pelos seus usuários.
 
-# Callback de Status
+Para receber os *callbacks*, é necessário configurar uma URL (*endpoint*) no sistema da **MOBSIM**. Solicite essa configuração para a **Equipe de Suporte da MOBSIM** ou ao seu Gerente Comercial (contato@mobsim.com.br).
 
-O sistema da **MOBSIM** envia ao seu sistema de forma automatizada e em tempo real os status dos SMS enviados (confira os tipos de status na seção “Tabela de Status”).
+## Callback de Status
 
-Para tal é necessário configurar uma URL (*endpoint*) no sistema da **MOBSIM**. Solicite essa configuração para a **Equipe de Suporte da MOBSIM** ou ao seu Gerente Comercial (contato@mobsim.com.br).
+O sistema da **MOBSIM** envia ao seu sistema, de forma automatizada e em tempo real, os status dos SMS enviados (confira os status na seção **Tabela de Status**).
 
-Confira abaixo um exemplo de *callback*:
+Exemplo de *callback*:
 
-<pre><code>
-        {
-           "id": "90f93d5c-6ad1-55af",
-           "number": "5511988776633",
-           "status": "Entregue",
-           "code": null,
-           "key1": null,
-           "key2": null,
-           "key3": null
-        }
-<br/></pre></code>
+<pre><code>{
+    "id": "90f93d5c-6ad1-55af",
+    "number": "5511988776633",
+    "status": "Entregue",
+    "code": null,
+    "key1": null,
+    "key2": null,
+    "key3": null
+}</code></pre>
 
-**Importante**: Campos não preenchidos no momento da requisição serão retornados vazios (*null*) e o seu sistema deve estar preparado para tratar essas informações.
+**Importante**: Campos não preenchidos no momento da requisição serão retornados vazios (*null*), e o seu sistema deve estar preparado para tratar essas informações.
 
-# Callback de Respostas
+## Callback de Respostas
 
-O sistema da **MOBSIM** envia ao seu sistema de forma automatizada e em tempo real os SMS respondidos (MO) pelos usuários (esta funcionalidade é utilizada, por exemplo, para opção de *opt-out*, dúvidas, reclamações, enquetes, SAC, pesquisas, confirmações de visita, etc).
+O sistema da **MOBSIM** envia ao seu sistema, de forma automatizada e em tempo real, os SMS respondidos (MO) pelos usuários. Essa funcionalidade é usada, por exemplo, para *opt-out*, dúvidas, reclamações, enquetes, SAC, pesquisas e confirmações de visita.
 
-Para tal é necessário configurar uma URL (*endpoint*) no sistema da **MOBSIM**. Solicite essa configuração para a **Equipe de Suporte da MOBSIM** ou ao seu Gerente Comercial (contato@mobsim.com.br).
+Exemplo de *callback*:
 
-Confira abaixo um exemplo de *callback*:
+<pre><code>{
+    "id": "90f93d5c-6ad1-55af",
+    "number": "5511988776633",
+    "message": "Resposta do Usuário",
+    "date": "2022-04-05 10:27:28",
+    "code": null,
+    "key1": null,
+    "key2": null,
+    "key3": null
+}</code></pre>
 
-<pre><code>
-        {
-           "id": "90f93d5c-6ad1-55af",
-           "number": "5511988776633",
-           "message": "Resposta do Usuário",
-           "date": "2022-04-05 10:27:28",
-           "code": null,
-           "key1": null,
-           "key2": null,
-           "key3": null
-        }
-<br/></pre></code>
-
-**Importante**: Campos não preenchidos no momento da requisição serão retornados vazios (*null*) e o seu sistema deve estar preparado para tratar essas informações.
-    
+**Importante**: Campos não preenchidos no momento da requisição serão retornados vazios (*null*), e o seu sistema deve estar preparado para tratar essas informações.

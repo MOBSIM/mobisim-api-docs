@@ -1,83 +1,495 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>MOBSIM - API SMS</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><style>@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200');.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}.right .hljs-comment{color:#969896}.right .css .hljs-class,.right .css .hljs-id,.right .css .hljs-pseudo,.right .hljs-attribute,.right .hljs-regexp,.right .hljs-tag,.right .hljs-variable,.right .html .hljs-doctype,.right .ruby .hljs-constant,.right .xml .hljs-doctype,.right .xml .hljs-pi,.right .xml .hljs-tag .hljs-title{color:#c66}.right .hljs-built_in,.right .hljs-constant,.right .hljs-literal,.right .hljs-number,.right .hljs-params,.right .hljs-pragma,.right .hljs-preprocessor{color:#de935f}.right .css .hljs-rule .hljs-attribute,.right .ruby .hljs-class .hljs-title{color:#f0c674}.right .hljs-header,.right .hljs-inheritance,.right .hljs-name,.right .hljs-string,.right .hljs-value,.right .ruby .hljs-symbol,.right .xml .hljs-cdata{color:#b5bd68}.right .css .hljs-hexcolor,.right .hljs-title{color:#8abeb7}.right .coffeescript .hljs-title,.right .hljs-function,.right .javascript .hljs-title,.right .perl .hljs-sub,.right .python .hljs-decorator,.right .python .hljs-title,.right .ruby .hljs-function .hljs-title,.right .ruby .hljs-title .hljs-keyword{color:#81a2be}.right .hljs-keyword,.right .javascript .hljs-function{color:#b294bb}.right .hljs{display:block;overflow-x:auto;background:#1d1f21;color:#c5c8c6;padding:.5em;-webkit-text-size-adjust:none}.right .coffeescript .javascript,.right .javascript .xml,.right .tex .hljs-formula,.right .xml .css,.right .xml .hljs-cdata,.right .xml .javascript,.right .xml .vbscript{opacity:.5}body{color:black;background:white;font:400 14px / 1.42 'Roboto',Helvetica,sans-serif}header{border-bottom:1px solid #f2f2f2;margin-bottom:12px}h1,h2,h3,h4,h5{color:black;margin:12px 0}h1 .permalink,h2 .permalink,h3 .permalink,h4 .permalink,h5 .permalink{margin-left:0;opacity:0;transition:opacity .25s ease}h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink{opacity:1}.triple h1 .permalink,.triple h2 .permalink,.triple h3 .permalink,.triple h4 .permalink,.triple h5 .permalink{opacity:.15}.triple h1:hover .permalink,.triple h2:hover .permalink,.triple h3:hover .permalink,.triple h4:hover .permalink,.triple h5:hover .permalink{opacity:.15}h1{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:36px}h2{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:30px}h3{font-size:100%;text-transform:uppercase}h5{font-size:100%;font-weight:normal}p{margin:0 0 10px}p.choices{line-height:1.6}a{color:#428bca;text-decoration:none}li p{margin:0}hr.split{border:0;height:1px;width:100%;padding-left:6px;margin:12px auto;background-image:linear-gradient(to right, rgba(0,0,0,0) 20%, rgba(0,0,0,0.2) 51.4%, rgba(255,255,255,0.2) 51.4%, rgba(255,255,255,0) 80%)}dl dt{float:left;width:130px;clear:left;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-left:150px}blockquote{color:rgba(0,0,0,0.5);font-size:15.5px;padding:10px 20px;margin:12px 0;border-left:5px solid #e8e8e8}blockquote p:last-child{margin-bottom:0}pre{background-color:#f5f5f5;padding:12px;border:1px solid #cfcfcf;border-radius:6px;overflow:auto}pre code{color:black;background-color:transparent;padding:0;border:none}code{color:#444;background-color:#f5f5f5;font:'Inconsolata',monospace;padding:1px 4px;border:1px solid #cfcfcf;border-radius:3px}ul,ol{padding-left:2em}table{border-collapse:collapse;border-spacing:0;margin-bottom:12px}table tr:nth-child(2n){background-color:#fafafa}table th,table td{padding:6px 12px;border:1px solid #e6e6e6}.text-muted{opacity:.5}.note,.warning{padding:.3em 1em;margin:1em 0;border-radius:2px;font-size:90%}.note h1,.warning h1,.note h2,.warning h2,.note h3,.warning h3,.note h4,.warning h4,.note h5,.warning h5,.note h6,.warning h6{font-family:200 36px 'Raleway',Helvetica,sans-serif;font-size:135%;font-weight:500}.note p,.warning p{margin:.5em 0}.note{color:black;background-color:#f0f6fb;border-left:4px solid #428bca}.note h1,.note h2,.note h3,.note h4,.note h5,.note h6{color:#428bca}.warning{color:black;background-color:#fbf1f0;border-left:4px solid #c9302c}.warning h1,.warning h2,.warning h3,.warning h4,.warning h5,.warning h6{color:#c9302c}header{margin-top:24px}nav{position:fixed;top:24px;bottom:0;overflow-y:auto}nav .resource-group{padding:0}nav .resource-group .heading{position:relative}nav .resource-group .heading .chevron{position:absolute;top:12px;right:12px;opacity:.5}nav .resource-group .heading a{display:block;color:black;opacity:.7;border-left:2px solid transparent;margin:0}nav .resource-group .heading a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul{list-style-type:none;padding-left:0}nav ul a{display:block;font-size:13px;color:rgba(0,0,0,0.7);padding:8px 12px;border-top:1px solid #d9d9d9;border-left:2px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}nav ul a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul>li{margin:0}nav ul>li:first-child{margin-top:-12px}nav ul>li:last-child{margin-bottom:-12px}nav ul ul a{padding-left:24px}nav ul ul li{margin:0}nav ul ul li:first-child{margin-top:0}nav ul ul li:last-child{margin-bottom:0}nav>div>div>ul>li:first-child>a{border-top:none}.preload *{transition:none !important}.pull-left{float:left}.pull-right{float:right}.badge{display:inline-block;float:right;min-width:10px;min-height:14px;padding:3px 7px;font-size:12px;color:#000;background-color:#f2f2f2;border-radius:10px;margin:-2px 0}.badge.get{color:#70bbe1;background-color:#d9edf7}.badge.head{color:#70bbe1;background-color:#d9edf7}.badge.options{color:#70bbe1;background-color:#d9edf7}.badge.put{color:#f0db70;background-color:#fcf8e3}.badge.patch{color:#f0db70;background-color:#fcf8e3}.badge.post{color:#93cd7c;background-color:#dff0d8}.badge.delete{color:#ce8383;background-color:#f2dede}.collapse-button{float:right}.collapse-button .close{display:none;color:#428bca;cursor:pointer}.collapse-button .open{color:#428bca;cursor:pointer}.collapse-button.show .close{display:inline}.collapse-button.show .open{display:none}.collapse-content{max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}nav{width:220px}.container{max-width:940px;margin-left:auto;margin-right:auto}.container .row .content{margin-left:244px;width:696px}.container .row:after{content:'';display:block;clear:both}.container-fluid nav{width:22%}.container-fluid .row .content{margin-left:24%}.container-fluid.triple nav{width:16.5%;padding-right:1px}.container-fluid.triple .row .content{position:relative;margin-left:16.5%;padding-left:24px}.middle:before,.middle:after{content:'';display:table}.middle:after{clear:both}.middle{box-sizing:border-box;width:51.5%;padding-right:12px}.right{box-sizing:border-box;float:right;width:48.5%;padding-left:12px}.right a{color:#428bca}.right h1,.right h2,.right h3,.right h4,.right h5,.right p,.right div{color:white}.right pre{background-color:#1d1f21;border:1px solid #1d1f21}.right pre code{color:#c5c8c6}.right .description{margin-top:12px}.triple .resource-heading{font-size:125%}.definition{margin-top:12px;margin-bottom:12px}.definition .method{font-weight:bold}.definition .method.get{color:#2e8ab8}.definition .method.head{color:#2e8ab8}.definition .method.options{color:#2e8ab8}.definition .method.post{color:#56b82e}.definition .method.put{color:#b8a22e}.definition .method.patch{color:#b8a22e}.definition .method.delete{color:#b82e2e}.definition .uri{word-break:break-all;word-wrap:break-word}.definition .hostname{opacity:.5}.example-names{background-color:#eee;padding:12px;border-radius:6px}.example-names .tab-button{cursor:pointer;color:black;border:1px solid #ddd;padding:6px;margin-left:12px}.example-names .tab-button.active{background-color:#d5d5d5}.right .example-names{background-color:#444}.right .example-names .tab-button{color:white;border:1px solid #666;border-radius:6px}.right .example-names .tab-button.active{background-color:#5e5e5e}#nav-background{position:fixed;left:0;top:0;bottom:0;width:16.5%;padding-right:14.4px;background-color:#fbfbfb;border-right:1px solid #f0f0f0;z-index:-1}#right-panel-background{position:absolute;right:-12px;top:-12px;bottom:-12px;width:48.6%;background-color:#333;z-index:-1}@media (max-width:1200px){nav{width:198px}.container{max-width:840px}.container .row .content{margin-left:224px;width:606px}}@media (max-width:992px){nav{width:169.4px}.container{max-width:720px}.container .row .content{margin-left:194px;width:526px}}@media (max-width:768px){nav{display:none}.container{width:95%;max-width:none}.container .row .content,.container-fluid .row .content,.container-fluid.triple .row .content{margin-left:auto;margin-right:auto;width:95%}#nav-background{display:none}#right-panel-background{width:48.6%}}.back-to-top{position:fixed;z-index:1;bottom:0;right:24px;padding:4px 8px;color:rgba(0,0,0,0.5);background-color:#f2f2f2;text-decoration:none !important;border-top:1px solid #d9d9d9;border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-top-left-radius:3px;border-top-right-radius:3px}.resource-group{padding:12px;margin-bottom:12px;background-color:white;border:1px solid #d9d9d9;border-radius:6px}.resource-group h2.group-heading,.resource-group .heading a{padding:12px;margin:-12px -12px 12px -12px;background-color:#f2f2f2;border-bottom:1px solid #d9d9d9;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.triple .content .resource-group{padding:0;border:none}.triple .content .resource-group h2.group-heading,.triple .content .resource-group .heading a{margin:0 0 12px 0;border:1px solid #d9d9d9}nav .resource-group .heading a{padding:12px;margin-bottom:0}nav .resource-group .collapse-content{padding:0}.action{margin-bottom:12px;padding:12px 12px 0 12px;overflow:hidden;border:1px solid transparent;border-radius:6px}.action h4.action-heading{padding:6px 12px;margin:-12px -12px 12px -12px;border-bottom:1px solid transparent;border-top-left-radius:6px;border-top-right-radius:6px;overflow:hidden}.action h4.action-heading .name{float:right;font-weight:normal;padding:6px 0}.action h4.action-heading .method{padding:6px 12px;margin-right:12px;border-radius:3px;display:inline-block}.action h4.action-heading .method.get{color:#fff;background-color:#337ab7}.action h4.action-heading .method.head{color:#fff;background-color:#337ab7}.action h4.action-heading .method.options{color:#fff;background-color:#337ab7}.action h4.action-heading .method.put{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.patch{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.post{color:#fff;background-color:#5cb85c}.action h4.action-heading .method.delete{color:#fff;background-color:#d9534f}.action h4.action-heading code{color:#444;background-color:#f5f5f5;border-color:#cfcfcf;font-weight:normal;word-break:break-all;display:inline-block;margin-top:2px}.action dl.inner{padding-bottom:2px}.action .title{border-bottom:1px solid white;margin:0 -12px -1px -12px;padding:12px}.action.get{border-color:#bce8f1}.action.get h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.head{border-color:#bce8f1}.action.head h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.options{border-color:#bce8f1}.action.options h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.post{border-color:#d6e9c6}.action.post h4.action-heading{color:#5cb85c;background:#dff0d8;border-bottom-color:#d6e9c6}.action.put{border-color:#faebcc}.action.put h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.patch{border-color:#faebcc}.action.patch h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.delete{border-color:#ebccd1}.action.delete h4.action-heading{color:#d9534f;background:#f2dede;border-bottom-color:#ebccd1}</style></head><body class="preload"><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container-fluid"><div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#top">Overview</a></div><div class="collapse-content"><ul><li><a href="#header-autenticação">Autenticação</a></li><li><a href="#header-header">Header</a></li><li><a href="#header-identificadores-de-sms">Identificadores de SMS</a></li><li><a href="#header-restrições">Restrições</a></li><li><a href="#header-formatação-dos-números">Formatação dos Números</a></li><li><a href="#header-estrutura-das-mensagens">Estrutura das Mensagens</a></li><li><a href="#header-tabela-de-códigos">Tabela de Códigos</a></li><li><a href="#header-statuscode">statusCode</a></li><li><a href="#header-detailcode">detailCode</a></li><li><a href="#header-tabela-de-status">Tabela de Status</a></li><li><a href="#header-status-do-sms">Status do SMS</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#métodos-da-api">Métodos da API</a></div><div class="collapse-content"><ul><li><a href="#métodos-da-api-envio-múltiplo-de-sms-post"><span class="badge post"><i class="fa fa-plus"></i></span>Testar envio de SMS Múltiplo</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#callbacks-da-api">Callbacks da API</a></div><div class="collapse-content"><ul><li><a href="#header-callback-de-status">Callback de Status</a></li><li><a href="#header-callback-de-respostas">Callback de Respostas</a></li></ul></div></div><p style="text-align: center; word-wrap: break-word;"><a href="https://mobsim-api.com.br">https://mobsim-api.com.br</a></p></nav><div class="content"><header><h1 id="top">MOBSIM - API SMS</h1></header><p>Bem-vindo à documentação da <strong>API SMS</strong> da <strong>MOBSIM</strong>!</p>
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>MOBSIM - API SMS</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><style>@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200');.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}.right .hljs-comment{color:#969896}.right .css .hljs-class,.right .css .hljs-id,.right .css .hljs-pseudo,.right .hljs-attribute,.right .hljs-regexp,.right .hljs-tag,.right .hljs-variable,.right .html .hljs-doctype,.right .ruby .hljs-constant,.right .xml .hljs-doctype,.right .xml .hljs-pi,.right .xml .hljs-tag .hljs-title{color:#c66}.right .hljs-built_in,.right .hljs-constant,.right .hljs-literal,.right .hljs-number,.right .hljs-params,.right .hljs-pragma,.right .hljs-preprocessor{color:#de935f}.right .css .hljs-rule .hljs-attribute,.right .ruby .hljs-class .hljs-title{color:#f0c674}.right .hljs-header,.right .hljs-inheritance,.right .hljs-name,.right .hljs-string,.right .hljs-value,.right .ruby .hljs-symbol,.right .xml .hljs-cdata{color:#b5bd68}.right .css .hljs-hexcolor,.right .hljs-title{color:#8abeb7}.right .coffeescript .hljs-title,.right .hljs-function,.right .javascript .hljs-title,.right .perl .hljs-sub,.right .python .hljs-decorator,.right .python .hljs-title,.right .ruby .hljs-function .hljs-title,.right .ruby .hljs-title .hljs-keyword{color:#81a2be}.right .hljs-keyword,.right .javascript .hljs-function{color:#b294bb}.right .hljs{display:block;overflow-x:auto;background:#1d1f21;color:#c5c8c6;padding:.5em;-webkit-text-size-adjust:none}.right .coffeescript .javascript,.right .javascript .xml,.right .tex .hljs-formula,.right .xml .css,.right .xml .hljs-cdata,.right .xml .javascript,.right .xml .vbscript{opacity:.5}body{color:black;background:white;font:400 14px / 1.42 'Roboto',Helvetica,sans-serif}header{border-bottom:1px solid #f2f2f2;margin-bottom:12px}h1,h2,h3,h4,h5{color:black;margin:12px 0}h1 .permalink,h2 .permalink,h3 .permalink,h4 .permalink,h5 .permalink{margin-left:0;opacity:0;transition:opacity .25s ease}h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink{opacity:1}.triple h1 .permalink,.triple h2 .permalink,.triple h3 .permalink,.triple h4 .permalink,.triple h5 .permalink{opacity:.15}.triple h1:hover .permalink,.triple h2:hover .permalink,.triple h3:hover .permalink,.triple h4:hover .permalink,.triple h5:hover .permalink{opacity:.15}h1{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:36px}h2{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:30px}h3{font-size:100%;text-transform:uppercase}h5{font-size:100%;font-weight:normal}p{margin:0 0 10px}p.choices{line-height:1.6}a{color:#428bca;text-decoration:none}li p{margin:0}hr.split{border:0;height:1px;width:100%;padding-left:6px;margin:12px auto;background-image:linear-gradient(to right, rgba(0,0,0,0) 20%, rgba(0,0,0,0.2) 51.4%, rgba(255,255,255,0.2) 51.4%, rgba(255,255,255,0) 80%)}dl dt{float:left;width:130px;clear:left;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-left:150px}blockquote{color:rgba(0,0,0,0.5);font-size:15.5px;padding:10px 20px;margin:12px 0;border-left:5px solid #e8e8e8}blockquote p:last-child{margin-bottom:0}pre{background-color:#f5f5f5;padding:12px;border:1px solid #cfcfcf;border-radius:6px;overflow:auto}pre code{color:black;background-color:transparent;padding:0;border:none}code{color:#444;background-color:#f5f5f5;font:'Inconsolata',monospace;padding:1px 4px;border:1px solid #cfcfcf;border-radius:3px}ul,ol{padding-left:2em}table{border-collapse:collapse;border-spacing:0;margin-bottom:12px}table tr:nth-child(2n){background-color:#fafafa}table th,table td{padding:6px 12px;border:1px solid #e6e6e6}.text-muted{opacity:.5}.note,.warning{padding:.3em 1em;margin:1em 0;border-radius:2px;font-size:90%}.note h1,.warning h1,.note h2,.warning h2,.note h3,.warning h3,.note h4,.warning h4,.note h5,.warning h5,.note h6,.warning h6{font-family:200 36px 'Raleway',Helvetica,sans-serif;font-size:135%;font-weight:500}.note p,.warning p{margin:.5em 0}.note{color:black;background-color:#f0f6fb;border-left:4px solid #428bca}.note h1,.note h2,.note h3,.note h4,.note h5,.note h6{color:#428bca}.warning{color:black;background-color:#fbf1f0;border-left:4px solid #c9302c}.warning h1,.warning h2,.warning h3,.warning h4,.warning h5,.warning h6{color:#c9302c}header{margin-top:24px}nav{position:fixed;top:24px;bottom:0;overflow-y:auto}nav .resource-group{padding:0}nav .resource-group .heading{position:relative}nav .resource-group .heading .chevron{position:absolute;top:12px;right:12px;opacity:.5}nav .resource-group .heading a{display:block;color:black;opacity:.7;border-left:2px solid transparent;margin:0}nav .resource-group .heading a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul{list-style-type:none;padding-left:0}nav ul a{display:block;font-size:13px;color:rgba(0,0,0,0.7);padding:8px 12px;border-top:1px solid #d9d9d9;border-left:2px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}nav ul a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul>li{margin:0}nav ul>li:first-child{margin-top:-12px}nav ul>li:last-child{margin-bottom:-12px}nav ul ul a{padding-left:24px}nav ul ul li{margin:0}nav ul ul li:first-child{margin-top:0}nav ul ul li:last-child{margin-bottom:0}nav>div>div>ul>li:first-child>a{border-top:none}.preload *{transition:none !important}.pull-left{float:left}.pull-right{float:right}.badge{display:inline-block;float:right;min-width:10px;min-height:14px;padding:3px 7px;font-size:12px;color:#000;background-color:#f2f2f2;border-radius:10px;margin:-2px 0}.badge.get{color:#70bbe1;background-color:#d9edf7}.badge.head{color:#70bbe1;background-color:#d9edf7}.badge.options{color:#70bbe1;background-color:#d9edf7}.badge.put{color:#f0db70;background-color:#fcf8e3}.badge.patch{color:#f0db70;background-color:#fcf8e3}.badge.post{color:#93cd7c;background-color:#dff0d8}.badge.delete{color:#ce8383;background-color:#f2dede}.collapse-button{float:right}.collapse-button .close{display:none;color:#428bca;cursor:pointer}.collapse-button .open{color:#428bca;cursor:pointer}.collapse-button.show .close{display:inline}.collapse-button.show .open{display:none}.collapse-content{max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}nav{width:220px}.container{max-width:940px;margin-left:auto;margin-right:auto}.container .row .content{margin-left:244px;width:696px}.container .row:after{content:'';display:block;clear:both}.container-fluid nav{width:22%}.container-fluid .row .content{margin-left:24%}.container-fluid.triple nav{width:16.5%;padding-right:1px}.container-fluid.triple .row .content{position:relative;margin-left:16.5%;padding-left:24px}.middle:before,.middle:after{content:'';display:table}.middle:after{clear:both}.middle{box-sizing:border-box;width:51.5%;padding-right:12px}.right{box-sizing:border-box;float:right;width:48.5%;padding-left:12px}.right a{color:#428bca}.right h1,.right h2,.right h3,.right h4,.right h5,.right p,.right div{color:white}.right pre{background-color:#1d1f21;border:1px solid #1d1f21}.right pre code{color:#c5c8c6}.right .description{margin-top:12px}.triple .resource-heading{font-size:125%}.definition{margin-top:12px;margin-bottom:12px}.definition .method{font-weight:bold}.definition .method.get{color:#2e8ab8}.definition .method.head{color:#2e8ab8}.definition .method.options{color:#2e8ab8}.definition .method.post{color:#56b82e}.definition .method.put{color:#b8a22e}.definition .method.patch{color:#b8a22e}.definition .method.delete{color:#b82e2e}.definition .uri{word-break:break-all;word-wrap:break-word}.definition .hostname{opacity:.5}.example-names{background-color:#eee;padding:12px;border-radius:6px}.example-names .tab-button{cursor:pointer;color:black;border:1px solid #ddd;padding:6px;margin-left:12px}.example-names .tab-button.active{background-color:#d5d5d5}.right .example-names{background-color:#444}.right .example-names .tab-button{color:white;border:1px solid #666;border-radius:6px}.right .example-names .tab-button.active{background-color:#5e5e5e}#nav-background{position:fixed;left:0;top:0;bottom:0;width:16.5%;padding-right:14.4px;background-color:#fbfbfb;border-right:1px solid #f0f0f0;z-index:-1}#right-panel-background{position:absolute;right:-12px;top:-12px;bottom:-12px;width:48.6%;background-color:#333;z-index:-1}@media (max-width:1200px){nav{width:198px}.container{max-width:840px}.container .row .content{margin-left:224px;width:606px}}@media (max-width:992px){nav{width:169.4px}.container{max-width:720px}.container .row .content{margin-left:194px;width:526px}}@media (max-width:768px){nav{display:none}.container{width:95%;max-width:none}.container .row .content,.container-fluid .row .content,.container-fluid.triple .row .content{margin-left:auto;margin-right:auto;width:95%}#nav-background{display:none}#right-panel-background{width:48.6%}}.back-to-top{position:fixed;z-index:1;bottom:0;right:24px;padding:4px 8px;color:rgba(0,0,0,0.5);background-color:#f2f2f2;text-decoration:none !important;border-top:1px solid #d9d9d9;border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-top-left-radius:3px;border-top-right-radius:3px}.resource-group{padding:12px;margin-bottom:12px;background-color:white;border:1px solid #d9d9d9;border-radius:6px}.resource-group h2.group-heading,.resource-group .heading a{padding:12px;margin:-12px -12px 12px -12px;background-color:#f2f2f2;border-bottom:1px solid #d9d9d9;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.triple .content .resource-group{padding:0;border:none}.triple .content .resource-group h2.group-heading,.triple .content .resource-group .heading a{margin:0 0 12px 0;border:1px solid #d9d9d9}nav .resource-group .heading a{padding:12px;margin-bottom:0}nav .resource-group .collapse-content{padding:0}.action{margin-bottom:12px;padding:12px 12px 0 12px;overflow:hidden;border:1px solid transparent;border-radius:6px}.action h4.action-heading{padding:6px 12px;margin:-12px -12px 12px -12px;border-bottom:1px solid transparent;border-top-left-radius:6px;border-top-right-radius:6px;overflow:hidden}.action h4.action-heading .name{float:right;font-weight:normal;padding:6px 0}.action h4.action-heading .method{padding:6px 12px;margin-right:12px;border-radius:3px;display:inline-block}.action h4.action-heading .method.get{color:#fff;background-color:#337ab7}.action h4.action-heading .method.head{color:#fff;background-color:#337ab7}.action h4.action-heading .method.options{color:#fff;background-color:#337ab7}.action h4.action-heading .method.put{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.patch{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.post{color:#fff;background-color:#5cb85c}.action h4.action-heading .method.delete{color:#fff;background-color:#d9534f}.action h4.action-heading code{color:#444;background-color:#f5f5f5;border-color:#cfcfcf;font-weight:normal;word-break:break-all;display:inline-block;margin-top:2px}.action dl.inner{padding-bottom:2px}.action .title{border-bottom:1px solid white;margin:0 -12px -1px -12px;padding:12px}.action.get{border-color:#bce8f1}.action.get h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.head{border-color:#bce8f1}.action.head h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.options{border-color:#bce8f1}.action.options h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.post{border-color:#d6e9c6}.action.post h4.action-heading{color:#5cb85c;background:#dff0d8;border-bottom-color:#d6e9c6}.action.put{border-color:#faebcc}.action.put h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.patch{border-color:#faebcc}.action.patch h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.delete{border-color:#ebccd1}.action.delete h4.action-heading{color:#d9534f;background:#f2dede;border-bottom-color:#ebccd1}</style></head><body class="preload"><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#top">Overview</a></div><div class="collapse-content"><ul><li><a href="#header-visão-geral">Visão Geral</a></li><li><a href="#header-autenticação">Autenticação</a></li><li><a href="#header-headers">Headers</a></li><li><a href="#header-requisição">Requisição</a></li><li><a href="#header-estrutura">Estrutura</a></li><li><a href="#header-campos">Campos</a></li><li><a href="#header-erros-de-validação">Erros de validação</a></li><li><a href="#header-identificadores">Identificadores</a></li><li><a href="#header-números-de-telefone">Números de Telefone</a></li><li><a href="#header-formato-aceito">Formato aceito</a></li><li><a href="#header-números-recusados">Números recusados</a></li><li><a href="#header-mensagens">Mensagens</a></li><li><a href="#header-limite-de-caracteres">Limite de caracteres</a></li><li><a href="#header-mensagens-concatenadas-(até-480-caracteres)">Mensagens concatenadas (até 480 caracteres)</a></li><li><a href="#header-caracteres-aceitos">Caracteres aceitos</a></li><li><a href="#header-opt-out">Opt-out</a></li><li><a href="#header-saldo-e-limite-mensal">Saldo e Limite Mensal</a></li><li><a href="#header-subcontas-pré-pagas-saldo-(detailcode-014)">Subcontas pré-pagas: saldo (detailCode 014)</a></li><li><a href="#header-subcontas-pós-pagas-limite-mensal-(detailcode-021)">Subcontas pós-pagas: limite mensal (detailCode 021)</a></li><li><a href="#header-alertas-por-e-mail">Alertas por e-mail</a></li><li><a href="#header-resposta">Resposta</a></li><li><a href="#header-formato">Formato</a></li><li><a href="#header-decodificação-da-resposta">Decodificação da resposta</a></li><li><a href="#header-códigos-http">Códigos HTTP</a></li><li><a href="#header-respostas-fora-do-padrão">Respostas Fora do Padrão</a></li><li><a href="#header-tabela-de-códigos">Tabela de Códigos</a></li><li><a href="#header-statuscode">statusCode</a></li><li><a href="#header-detailcode">detailCode</a></li><li><a href="#header-tabela-de-status">Tabela de Status</a></li><li><a href="#header-limites-de-uso">Limites de Uso</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#métodos-da-api">Métodos da API</a></div><div class="collapse-content"><ul><li><a href="#métodos-da-api-envio-múltiplo-de-sms-post"><span class="badge post"><i class="fa fa-plus"></i></span>Enviar SMS</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#callbacks-da-api">Callbacks da API</a></div><div class="collapse-content"><ul><li><a href="#header-callback-de-status">Callback de Status</a></li><li><a href="#header-callback-de-respostas">Callback de Respostas</a></li></ul></div></div><p style="text-align: center; word-wrap: break-word;"><a href="https://mobsim-api.com.br">https://mobsim-api.com.br</a></p></nav><div class="content"><header><h1 id="top">MOBSIM - API SMS</h1></header><p>Bem-vindo à documentação da <strong>API SMS</strong> da <strong>MOBSIM</strong>!</p>
 <p>Com ela você pode enviar SMS para todas as operadoras brasileiras, em todo o território nacional, e receber status de entrega e respostas dos usuários (MO) de forma automatizada.</p>
-<p>A <strong>API</strong> da <strong>MOBSIM</strong> suporta o formato <strong>REST</strong>:</p>
-<p>A sua programação ou o seu sistema deve realizar uma requisição para a URL <strong><a href="https://mobsim-api.com.br/sms">https://mobsim-api.com.br/sms</a></strong>, enviando os parâmetros por meio de POST. O retorno para cada requisição será um JSON cujo formato é detalhado ao longo desta documentação.</p>
+<h1 id="header-visão-geral">Visão Geral <a class="permalink" href="#header-visão-geral" aria-hidden="true">¶</a></h1>
+<p>A <strong>API</strong> da <strong>MOBSIM</strong> segue o formato <strong>REST</strong>. Todo envio é feito por uma única chamada:</p>
+<pre><code>POST https://mobsim-api.com.br/sms</code></pre>
+<p>Em cada chamada você envia de <strong>1 a 1.000 mensagens</strong> em um JSON. A <strong>API</strong> valida cada mensagem individualmente e devolve, também em JSON, o resultado de cada uma.</p>
+<p>Resumo do fluxo:</p>
+<ol>
+<li>
+<p>Sua aplicação envia a requisição com a chave de acesso no header <code>Authorization</code>.</p>
+</li>
+<li>
+<p>A <strong>API</strong> valida a requisição como um todo (autenticação, quantidade de mensagens, <code>groupId</code>, saldo e limite mensal). Se alguma dessas validações falhar, <strong>nenhuma mensagem é enviada</strong> e a resposta traz o erro no campo <code>header</code>.</p>
+</li>
+<li>
+<p>Se a requisição for aceita, cada mensagem é validada separadamente. As mensagens válidas são enviadas, e as inválidas são recusadas sem impedir o envio das demais. O resultado de cada mensagem vem no campo <code>messages</code>.</p>
+</li>
+<li>
+<p>Depois do envio, a <strong>MOBSIM</strong> pode chamar a sua aplicação com os status de entrega e as respostas dos usuários (veja <strong>Callbacks da API</strong>).</p>
+</li>
+</ol>
 <h1 id="header-autenticação">Autenticação <a class="permalink" href="#header-autenticação" aria-hidden="true">¶</a></h1>
 <p>Todas as requisições à <strong>API SMS</strong> devem incluir uma chave de acesso gerada no momento da criação da subconta no sistema da <strong>MOBSIM</strong>. Consulte a <strong>Equipe de Suporte da MOBSIM</strong> ou o seu Gerente Comercial para obter suas credenciais (<a href="mailto:contato@mobsim.com.br">contato@mobsim.com.br</a>).</p>
-<p>A chave de acesso deve ser fornecida conforme o exemplo a seguir:</p>
-<pre><code>Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</code></pre>
-<p><strong>Importante</strong>: Caso haja erro na autenticação, será retornado o <code>status code 02</code> e o <code>detail code 017</code>.</p>
-<h1 id="header-header">Header <a class="permalink" href="#header-header" aria-hidden="true">¶</a></h1>
+<p>A chave de acesso deve ser enviada no header <code>Authorization</code>, precedida de <code>Basic</code>, exatamente como foi fornecida:</p>
+<pre><code>Authorization: Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</code></pre>
+<p>Erros de autenticação retornam <strong>HTTP 401</strong> e recusam a requisição inteira:</p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chave de acesso inválida</td>
+<td>HTTP 401, <code>statusCode 02</code> e <code>detailCode 017</code></td>
+</tr>
+<tr>
+<td>Subconta inativa</td>
+<td>HTTP 401, <code>statusCode 02</code> e <code>detailCode 018</code></td>
+</tr>
+<tr>
+<td>Subconta excluída</td>
+<td>HTTP 401, <code>statusCode 02</code> e <code>detailCode 019</code></td>
+</tr>
+<tr>
+<td>API inativa para a subconta</td>
+<td>HTTP 401, <code>statusCode 02</code> e <code>detailCode 020</code></td>
+</tr>
+<tr>
+<td>Header <code>Authorization</code> ausente</td>
+<td>HTTP 401 com uma mensagem de texto, <strong>sem</strong> <code>statusCode</code> e <code>detailCode</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="header-headers">Headers <a class="permalink" href="#header-headers" aria-hidden="true">¶</a></h1>
 <p>Todas as requisições devem incluir, além do cabeçalho de autenticação, os seguintes headers:</p>
-<pre><code>Content-Type:application/json
-Accept:application/json</code></pre>
-<h1 id="header-identificadores-de-sms">Identificadores de SMS <a class="permalink" href="#header-identificadores-de-sms" aria-hidden="true">¶</a></h1>
+<pre><code>Content-Type: application/json
+Accept: application/json</code></pre>
+<p>Se o <code>Content-Type</code> não for <code>application/json</code>, a requisição é recusada (veja <strong>Respostas Fora do Padrão</strong>).</p>
+<h1 id="header-requisição">Requisição <a class="permalink" href="#header-requisição" aria-hidden="true">¶</a></h1>
+<h2 id="header-estrutura">Estrutura <a class="permalink" href="#header-estrutura" aria-hidden="true">¶</a></h2>
+<p>A requisição é um objeto <strong>JSON</strong> com uma lista de mensagens. É possível enviar uma mensagem diferente para cada número ou a mesma mensagem para vários números.</p>
+<pre><code>{
+    "groupId": "90f93d5c-6ad1-44af",
+    "groupMsg": "",
+    "messages": [
+        {
+            "id": "90f93d5c-6ad1-44af",
+            "to": "11988776655",
+            "msg": "Mensagem da MOBSIM 1",
+            "code": "MeuID_20-05-2018_1",
+            "key1": "41177319923"
+        },
+        {
+            "id": "90f93d5c-6ad1-77af",
+            "to": "11988776644",
+            "msg": "Mensagem da MOBSIM 2",
+            "code": "MeuID_20-05-2018_2",
+            "key1": "41177319923"
+        }
+    ]
+}</code></pre>
+<h2 id="header-campos">Campos <a class="permalink" href="#header-campos" aria-hidden="true">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Obrigatório</th>
+<th>Limite</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>groupId</code></td>
+<td>string</td>
+<td>Não</td>
+<td>100 caracteres</td>
+<td>Identificador da requisição. Deve ser único.</td>
+</tr>
+<tr>
+<td><code>groupMsg</code></td>
+<td>string</td>
+<td>Não*</td>
+<td>160 ou 480 caracteres</td>
+<td>Mensagem padrão, usada nas mensagens que vierem sem <code>msg</code>.</td>
+</tr>
+<tr>
+<td><code>messages</code></td>
+<td>array</td>
+<td>Sim</td>
+<td>1 a 1.000 itens</td>
+<td>Lista de mensagens a enviar.</td>
+</tr>
+<tr>
+<td><code>messages[].id</code></td>
+<td>string</td>
+<td>Sim</td>
+<td>100 caracteres</td>
+<td>Identificador único da mensagem.</td>
+</tr>
+<tr>
+<td><code>messages[].to</code></td>
+<td>string</td>
+<td>Sim</td>
+<td>—</td>
+<td>Número do celular do destinatário (veja <strong>Números de Telefone</strong>).</td>
+</tr>
+<tr>
+<td><code>messages[].msg</code></td>
+<td>string</td>
+<td>Não*</td>
+<td>160 ou 480 caracteres</td>
+<td>Texto da mensagem (veja <strong>Mensagens</strong>).</td>
+</tr>
+<tr>
+<td><code>messages[].code</code></td>
+<td>string</td>
+<td>Não</td>
+<td>100 caracteres</td>
+<td>Campo livre para controle interno.</td>
+</tr>
+<tr>
+<td><code>messages[].key1</code></td>
+<td>string</td>
+<td>Não</td>
+<td>100 caracteres</td>
+<td>Campo livre para controle interno.</td>
+</tr>
+<tr>
+<td><code>messages[].key2</code></td>
+<td>string</td>
+<td>Não</td>
+<td>100 caracteres</td>
+<td>Campo livre para controle interno.</td>
+</tr>
+<tr>
+<td><code>messages[].key3</code></td>
+<td>string</td>
+<td>Não</td>
+<td>100 caracteres</td>
+<td>Campo livre para controle interno.</td>
+</tr>
+</tbody>
+</table>
+<p>* Cada mensagem precisa ter texto: ou o seu próprio <code>msg</code>, ou o <code>groupMsg</code> da requisição.</p>
+<h2 id="header-erros-de-validação">Erros de validação <a class="permalink" href="#header-erros-de-validação" aria-hidden="true">¶</a></h2>
+<p>Há dois níveis de erro:</p>
+<ul>
+<li>
+<p><strong>Erros da requisição:</strong> recusam a chamada inteira, retornam <strong>HTTP 400</strong> ou <strong>HTTP 401</strong> e trazem o código no campo <code>header</code>. Nenhuma mensagem é enviada.</p>
+</li>
+<li>
+<p><strong>Erros da mensagem:</strong> recusam só aquela mensagem. A chamada é aceita com <strong>HTTP 200</strong>, as demais mensagens são enviadas normalmente e o código da mensagem recusada vem no item correspondente de <code>messages</code>.</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Problema</th>
+<th>Nível</th>
+<th>Código</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>messages</code></td>
+<td>Lista vazia</td>
+<td>Requisição (HTTP 400)</td>
+<td><code>016</code></td>
+</tr>
+<tr>
+<td><code>messages</code></td>
+<td>Mais de 1.000 itens</td>
+<td>Requisição (HTTP 400)</td>
+<td><code>015</code></td>
+</tr>
+<tr>
+<td><code>groupId</code></td>
+<td>Mais de 100 caracteres</td>
+<td>Requisição (HTTP 400)</td>
+<td><code>008</code></td>
+</tr>
+<tr>
+<td><code>groupId</code></td>
+<td>Já usado anteriormente</td>
+<td>Requisição (HTTP 400)</td>
+<td><code>009</code></td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Vazio</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>007</code></td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Mais de 100 caracteres</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>006</code></td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Repetido na requisição ou já usado anteriormente</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>005</code></td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td>Número inválido</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>002</code></td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td>Número na blacklist</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>999</code></td>
+</tr>
+<tr>
+<td><code>msg</code></td>
+<td>Vazia e sem <code>groupMsg</code></td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>004</code></td>
+</tr>
+<tr>
+<td><code>msg</code></td>
+<td>Acima do limite de caracteres</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>003</code></td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>Mais de 100 caracteres</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>010</code></td>
+</tr>
+<tr>
+<td><code>key1</code></td>
+<td>Mais de 100 caracteres</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>011</code></td>
+</tr>
+<tr>
+<td><code>key2</code></td>
+<td>Mais de 100 caracteres</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>012</code></td>
+</tr>
+<tr>
+<td><code>key3</code></td>
+<td>Mais de 100 caracteres</td>
+<td>Mensagem (HTTP 200)</td>
+<td><code>013</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Importante</strong>: Todas as mensagens precisam ter o campo <code>to</code>. Uma mensagem sem <code>to</code> faz a requisição inteira falhar (veja <strong>Respostas Fora do Padrão</strong>).</p>
+<h2 id="header-identificadores">Identificadores <a class="permalink" href="#header-identificadores" aria-hidden="true">¶</a></h2>
 <ul>
 <li><strong>ID (Identificador Único de SMS)</strong></li>
 </ul>
-<p>É obrigatório a utilização do parâmetro <strong>ID</strong> como um identificador único de SMS. O <strong>ID</strong> está vinculado ao número enviado dentro do sistema da <strong>MOBSIM</strong> e será utilizado para vincular os status dos SMS, as respostas dos usuários (MO) e proteção contra envios duplicados.</p>
-<p>Restringimos em <strong>100 caracteres</strong> o limite do <code>id</code>. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o <code>detail code 006</code>.</p>
-<p><strong>Importante</strong>: É proibida a utilização de um <strong>ID</strong> que já tenha sido utilizado uma vez, por isso recomendamos utilizar <a href="https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global">GUID</a> para gerar IDs únicos. Se o ID estiver duplicado será retornado o <code>status code 02</code> e o <code>detail code 005</code>.</p>
+<p>O <code>id</code> é obrigatório. Ele fica vinculado ao número enviado dentro do sistema da <strong>MOBSIM</strong> e é usado para vincular os status dos SMS, as respostas dos usuários (MO) e para proteger contra envios duplicados.</p>
+<p>É proibido usar um <code>id</code> que já tenha sido usado, seja na mesma requisição ou em uma requisição anterior. Recomendamos usar <a href="https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global">GUID</a> para gerar IDs únicos. Mensagens com <code>id</code> duplicado recebem o <code>detailCode 005</code>, e as demais mensagens da chamada são enviadas normalmente.</p>
 <ul>
-<li><strong>GroupID (Identificador de Chamadas)</strong></li>
+<li><strong>GroupID (Identificador da Requisição)</strong></li>
 </ul>
-<p>A utilização do parâmetro <strong>GroupID</strong> para identificação de requisições é opcional. Ele serve para identificar e agrupar várias requisições distintas.</p>
-<p>Restringimos em <strong>100 caracteres</strong> o limite do <code>groupId</code>. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o <code>detail code 009</code>.</p>
-<p><strong>Importante</strong>: É proibida a utilização de um <strong>GroupID</strong> que já tenha sido usado uma vez, por isso recomendamos utilizar <a href="https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global">GUID</a> para gerar GroupIDs únicos. Se o GroupID estiver duplicado será retornado o <code>status code 02</code> e o <code>detail code 008</code>.</p>
+<p>O <code>groupId</code> é opcional. Ele serve para identificar e agrupar requisições.</p>
+<p>É proibido usar um <code>groupId</code> que já tenha sido usado. Recomendamos usar <a href="https://pt.wikipedia.org/wiki/Identificador_%C3%9Anico_Global">GUID</a>. Se o <code>groupId</code> estiver duplicado, a requisição inteira é recusada com o <code>detailCode 009</code>. Se tiver mais de 100 caracteres, é recusada com o <code>detailCode 008</code>.</p>
 <ul>
-<li><strong>CODE e KEY (Identificador Próprio)</strong></li>
+<li><strong>Code e Key (Identificadores Próprios)</strong></li>
 </ul>
-<p>Os parâmetros <strong>Code</strong> e <strong>Key</strong> são campos extras que podem ser preenchidos com códigos, IDs, chaves e outras informações diversas para controle interno. Esses parâmetros são disponibilizados nos <em>callbacks</em> de retornos de status e respostas (MO) de forma automatizada (veja “Métodos da API” no final da documentação).</p>
-<p>Ao todo são quatro parâmetros: <code>Code</code>, <code>Key1</code>, <code>Key2</code> e <code>Key3</code>.</p>
-<p>Restringimos em <strong>100 caracteres</strong> o limite desses parâmetros. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o(s) <code>detail code 010, 011, 012 e 013</code>.</p>
-<h1 id="header-restrições">Restrições <a class="permalink" href="#header-restrições" aria-hidden="true">¶</a></h1>
+<p>Os campos <code>code</code>, <code>key1</code>, <code>key2</code> e <code>key3</code> são opcionais e podem ser preenchidos com códigos, IDs, chaves e outras informações para controle interno. Eles são devolvidos nos <em>callbacks</em> de status e de respostas (MO) (veja <strong>Callbacks da API</strong>).</p>
+<p>O limite é de 100 caracteres por campo. Se ultrapassado, só a mensagem afetada é recusada, com o <code>detailCode</code> 010, 011, 012 ou 013.</p>
 <ul>
-<li><strong>Requisições Simultâneas</strong></li>
+<li><strong>groupMsg (Mensagem Padrão)</strong></li>
 </ul>
-<p>Solicitamos que sejam feitas, no máximo, <strong>10 requisições simultâneas</strong> (<em>threads</em>) para a aplicação da <strong>MOBSIM</strong> com um espaçamento de <strong>10 segundos por requisição</strong>.</p>
+<p>O <code>groupMsg</code> replica a mesma mensagem para todos os números da lista. Mensagens que vierem com o <code>msg</code> vazio usam o texto do <code>groupMsg</code>. Se as duas forem preenchidas, vale o <code>msg</code> da mensagem.</p>
+<h1 id="header-números-de-telefone">Números de Telefone <a class="permalink" href="#header-números-de-telefone" aria-hidden="true">¶</a></h1>
+<h2 id="header-formato-aceito">Formato aceito <a class="permalink" href="#header-formato-aceito" aria-hidden="true">¶</a></h2>
+<p>Envie o número no formato <strong>DDD + número</strong> (ex.: <code>11988776655</code>). O DDI (<code>55</code>) e o nono dígito (<code>9</code>) são opcionais, pois o sistema da <strong>MOBSIM</strong> os inclui automaticamente.</p>
+<p>O número pode vir com máscara: espaços, parênteses, hífens, <code>+</code> e zeros à esquerda são ignorados. Por exemplo, <code>(11) 98877-6655</code>, <code>+55 11 98877-6655</code> e <code>011988776655</code> são tratados como <code>5511988776655</code>.</p>
+<p>A resposta devolve no campo <code>to</code> o número já normalizado, com 13 dígitos (<code>55</code> + DDD + 9 + número).</p>
+<h2 id="header-números-recusados">Números recusados <a class="permalink" href="#header-números-recusados" aria-hidden="true">¶</a></h2>
+<p>Somente <strong>celulares brasileiros</strong> são aceitos. São recusados com o <code>detailCode 002</code>:</p>
 <ul>
-<li><strong>Limite de Números por Requisição</strong></li>
+<li>
+<p>números que, depois da normalização, não tenham 13 dígitos;</p>
+</li>
+<li>
+<p>números com DDI diferente de <code>55</code>;</p>
+</li>
+<li>
+<p><strong>telefones fixos</strong>;</p>
+</li>
+<li>
+<p>números com <strong>falsos DDDs</strong>, ou seja, DDDs que não existem no Brasil: 10, 20, 23, 25, 26, 29, 30, 36, 39, 40, 50, 52, 56, 57, 58, 59, 60, 70, 72, 76, 78, 80 e 90;</p>
+</li>
+<li>
+<p>números em que todos os dígitos depois do DDD e do nono dígito são iguais (ex.: <code>11999999999</code>).</p>
+</li>
 </ul>
-<p>Restringimos que cada requisição tenha, no máximo, <strong>500 números</strong>. Se o limite for ultrapassado, será retornado o <code>status code 02</code> e o <code>detail code 015</code>.</p>
+<p><strong>Importante</strong>: Os números recusados com o <code>detailCode 002</code> não são tarifados.</p>
+<h1 id="header-mensagens">Mensagens <a class="permalink" href="#header-mensagens" aria-hidden="true">¶</a></h1>
+<h2 id="header-limite-de-caracteres">Limite de caracteres <a class="permalink" href="#header-limite-de-caracteres" aria-hidden="true">¶</a></h2>
+<p>O padrão SMS (“<em>Short Message Service</em>”) suporta até <strong>160 caracteres</strong>. Mensagens acima desse limite são recusadas com o <code>detailCode 003</code>.</p>
+<p>O limite é verificado <strong>depois</strong> da limpeza de caracteres e <strong>já com</strong> o texto de opt-out, quando houver (veja abaixo).</p>
+<h2 id="header-mensagens-concatenadas-(até-480-caracteres)">Mensagens concatenadas (até 480 caracteres) <a class="permalink" href="#header-mensagens-concatenadas-(até-480-caracteres)" aria-hidden="true">¶</a></h2>
+<p>É possível enviar SMS com até <strong>480 caracteres</strong>. Para isso é necessário solicitar uma configuração específica na sua subconta. Consulte a <strong>Equipe de Suporte da MOBSIM</strong> ou o seu Gerente Comercial (<a href="mailto:contato@mobsim.com.br">contato@mobsim.com.br</a>).</p>
+<p>Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para identificar as partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos exibam as partes como uma única mensagem.</p>
+<p>Como o particionamento é feito no último espaço (as palavras não são cortadas), uma parte pode ter menos de 152 caracteres.</p>
+<p>A requisição é idêntica à de mensagens curtas. Basta enviar o texto longo no campo <code>msg</code>.</p>
+<p><strong>Importante</strong>: Cada parte da mensagem é tarifada como 1 SMS.</p>
+<h2 id="header-caracteres-aceitos">Caracteres aceitos <a class="permalink" href="#header-caracteres-aceitos" aria-hidden="true">¶</a></h2>
+<p>O texto da mensagem passa por uma limpeza automática antes do envio:</p>
 <ul>
-<li><strong>ID</strong></li>
+<li>
+<p><strong>Mantidos:</strong> letras sem acento (A–Z, a–z), números (0–9), espaço e os símbolos <code>$ @ _ ! &quot; # % &amp; ' ( ) * + , - . / : ; &lt; = &gt; ?</code></p>
+</li>
+<li>
+<p><strong>Trocados pela letra sem acento:</strong> á à â ã ä å, é è ê, í ì, ó ò ô õ ö, ú ù ü, ç e ñ, em maiúsculas e minúsculas (ex.: “Promoção” vira “Promocao”).</p>
+</li>
+<li>
+<p><strong>Removidos sem aviso:</strong> qualquer outro caractere, como quebras de linha, tabulações, emojis, <code>[</code>, <code>]</code>, <code>{</code>, <code>}</code>, <code>\</code>, <code>|</code>, <code>~</code>, <code>^</code>, <code>`</code>, <code>€</code>, <code>º</code>, <code>ª</code> e letras com outros acentos (ë, ï, î, û).</p>
+</li>
 </ul>
-<p>Restringimos o uso de <code>id</code> duplicados, isto é, que já tenham sido utilizados via API uma primeira vez.</p>
-<p>Caso o sistema detecte mensagens com <code>id</code> duplicados, a chamada será aceita, porém todas as mensagens duplicadas apresentarão o código <code>status code 02</code> e o <code>detail code 005</code> (vide tabela de códigos abaixo).</p>
+<p>Recomendamos revisar o texto antes do envio para que a remoção de caracteres não altere o sentido da mensagem.</p>
+<h2 id="header-opt-out">Opt-out <a class="permalink" href="#header-opt-out" aria-hidden="true">¶</a></h2>
+<p>Se a sua subconta estiver configurada com <strong>opt-out</strong>, o texto <code> (Envie PARE p/Sair)</code> (20 caracteres, incluindo o espaço inicial) é adicionado ao fim de cada mensagem.</p>
+<p>Esse texto <strong>conta no limite de caracteres</strong>. Na prática, o limite disponível para o seu texto passa a ser de <strong>140 caracteres</strong> (ou <strong>460</strong>, em subcontas com mensagens concatenadas).</p>
+<h1 id="header-saldo-e-limite-mensal">Saldo e Limite Mensal <a class="permalink" href="#header-saldo-e-limite-mensal" aria-hidden="true">¶</a></h1>
+<h2 id="header-subcontas-pré-pagas-saldo-(detailcode-014)">Subcontas pré-pagas: saldo (detailCode 014) <a class="permalink" href="#header-subcontas-pré-pagas-saldo-(detailcode-014)" aria-hidden="true">¶</a></h2>
+<p>A verificação de saldo vale <strong>somente para subcontas pré-pagas</strong>. O saldo disponível precisa ser maior ou igual à quantidade de mensagens da requisição. Caso contrário, a requisição inteira é recusada com <strong>HTTP 400</strong> e o <code>detailCode 014</code>, e nenhuma mensagem é enviada.</p>
+<p>Somente as mensagens enviadas (<code>detailCode 001</code>) são debitadas do saldo. Mensagens concatenadas debitam uma unidade por parte.</p>
+<p>Subcontas pós-pagas não têm verificação de saldo. Elas podem ter um limite mensal, descrito a seguir.</p>
+<h2 id="header-subcontas-pós-pagas-limite-mensal-(detailcode-021)">Subcontas pós-pagas: limite mensal (detailCode 021) <a class="permalink" href="#header-subcontas-pós-pagas-limite-mensal-(detailcode-021)" aria-hidden="true">¶</a></h2>
+<p>Subcontas pós-pagas podem ter um <strong>limite mensal de envios</strong> configurado pela <strong>MOBSIM</strong>. O limite considera o total de SMS debitados da subconta no mês corrente (horário de Brasília), somando os envios pela API e pelas campanhas, e pode ser ampliado temporariamente, apenas para um mês específico, mediante solicitação à <strong>Equipe de Suporte da MOBSIM</strong>.</p>
+<p>Quando o total enviado no mês atinge o limite, as requisições seguintes são recusadas com <strong>HTTP 400</strong> e o <code>detailCode 021</code> até o início do mês seguinte. A requisição que ultrapassa o limite ainda é aceita e enviada. O bloqueio passa a valer a partir da próxima.</p>
+<h2 id="header-alertas-por-e-mail">Alertas por e-mail <a class="permalink" href="#header-alertas-por-e-mail" aria-hidden="true">¶</a></h2>
+<p>Quando a subconta tem limite mensal, a <strong>MOBSIM</strong> envia alertas por e-mail aos <strong>usuários ativos vinculados à subconta</strong> e à equipe <strong>MOBSIM</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Alerta</th>
+<th>Quando é enviado</th>
+<th>Efeito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>80%</td>
+<td>Na requisição que faz o total do mês atingir 80% do limite</td>
+<td>Apenas aviso</td>
+</tr>
+<tr>
+<td>100%</td>
+<td>Na requisição que faz o total do mês atingir 100% do limite</td>
+<td>Aviso. As requisições seguintes do mês são recusadas com o <code>detailCode 021</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cada alerta é enviado <strong>uma única vez por mês</strong>. O e-mail informa o limite mensal, o total usado no mês e a quantidade ainda disponível. Se uma única requisição levar o total de menos de 80% direto para 100% ou mais, só o alerta de 100% é enviado.</p>
+<h1 id="header-resposta">Resposta <a class="permalink" href="#header-resposta" aria-hidden="true">¶</a></h1>
+<h2 id="header-formato">Formato <a class="permalink" href="#header-formato" aria-hidden="true">¶</a></h2>
+<p>A resposta tem dois campos:</p>
 <ul>
-<li><strong>GroupID</strong></li>
+<li>
+<p><code>header</code>: preenchido apenas quando a <strong>requisição inteira</strong> é recusada. Nesse caso, <code>messages</code> vem <code>null</code>.</p>
+</li>
+<li>
+<p><code>messages</code>: preenchido quando a requisição é aceita, com o resultado de <strong>cada mensagem</strong>, na mesma ordem do envio. Nesse caso, <code>header</code> vem <code>null</code>.</p>
+</li>
 </ul>
-<p>Restringimos o uso de <code>GroupID</code> duplicados, isto é, que já tenham sido utilizados via API uma primeira vez.</p>
-<p>Caso o sistema detecte requisições com <code>GroupID</code> duplicado, será apresentado o código <code>status code 02</code> e o <code>detail code 008</code> (vide tabela de códigos abaixo).</p>
-<ul>
-<li><strong>Caractere Excedido</strong></li>
-</ul>
-<p>Restringimos em <strong>100 caracteres</strong> o limite dos parâmetros: <code>ID</code>, <code>GroupID</code>, <code>Code</code>, <code>Key1</code>, <code>Key2</code> e <code>Key3</code>. Caso esse limite seja ultrapassado, o erro <code>400 Bad Request</code> será apresentado e a requisição será rejeitada.</p>
-<h1 id="header-formatação-dos-números">Formatação dos Números <a class="permalink" href="#header-formatação-dos-números" aria-hidden="true">¶</a></h1>
-<ul>
-<li><strong>Número Válido</strong></li>
-</ul>
-<p>Para que um número seja considerado válido, ele precisa seguir a seguinte estrutura: “DDD” + “NÚMERO”. (Ex: 1198980202). É opcional a inclusão do DDI (“55”) e Nono Dígito (“9”), pois o sistema da <strong>MOBSIM</strong> inclui essas informações automaticamente.</p>
-<ul>
-<li><strong>Números Inválidos</strong></li>
-</ul>
-<p>Qualquer estrutura de número que não siga a recomendação anterior, será apresentado o código <code>status code 02</code> e o <code>detail code 002</code> (vide tabela de códigos abaixo).</p>
-<p><strong>Importante</strong>: Os números inválidos que receberem o código <code>detail code 002</code> não serão tarifados.</p>
-<h1 id="header-estrutura-das-mensagens">Estrutura das Mensagens <a class="permalink" href="#header-estrutura-das-mensagens" aria-hidden="true">¶</a></h1>
-<ul>
-<li><strong>Limite de 160 caracteres por mensagem</strong></li>
-</ul>
-<p>O padrão SMS (“<em>Short Message Service</em>”) suporta até 160 caracteres. Se alguma mensagem ultrapassar esse limite será apresentado o código <code>status code 02</code> e o <code>detail code 003</code> (vide tabela de códigos abaixo).</p>
-<ul>
-<li><strong>Mensagens Concatenadas – até 480 caracteres</strong></li>
-</ul>
-<p>É possível enviar SMS com mais de 160 caracteres, para tanto será necessário solicitar uma configuração específica em sua subconta no sistema da <strong>MOBSIM</strong>. Consulte a <strong>Equipe de Suporte da MOBSIM</strong> ou o seu Gerente Comercial (<a href="mailto:contato@mobsim.com.br">contato@mobsim.com.br</a>).</p>
-<p>Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para que seja feita a identificação das partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos interpretem como uma única mensagem.</p>
-<p>Além disso, como o particionamento das mensagens será realizado no último caractere de espaço, ou seja, palavras não serão truncadas, a mensagem pode ser particionada com menos de 152 caracteres.</p>
-<p>Para esse tipo de envio a requisição será idêntica a requisição de envio de mensagens curtas. Basta enviar o texto da mensagem longa no parâmetro <code>msg</code> com mais de 160 caracteres.</p>
-<p><strong>Importante</strong>: Lembrando que cada parte do SMS será tarifado 1 SMS adicional.</p>
+<p>Cada resultado traz <code>statusCode</code>, <code>statusDescription</code>, <code>detailCode</code> e <code>detailDescription</code> (veja <strong>Tabela de Códigos</strong>). Os itens de <code>messages</code> também trazem o número normalizado em <code>to</code>.</p>
+<p>O <code>detailCode 001</code> indica que a mensagem foi <strong>aceita</strong> pela <strong>MOBSIM</strong> para envio. O status de entrega no celular é informado depois, pelo <em>callback</em> de status.</p>
+<h2 id="header-decodificação-da-resposta">Decodificação da resposta <a class="permalink" href="#header-decodificação-da-resposta" aria-hidden="true">¶</a></h2>
+<p><strong>Importante</strong>: O corpo da resposta é uma <strong>string JSON</strong> que contém o JSON do resultado. Ou seja, o resultado vem codificado duas vezes, e a sua aplicação precisa decodificá-lo duas vezes.</p>
+<p>Corpo recebido:</p>
+<pre><code>"{\"header\":null,\"messages\":[{\"to\":\"5511988776655\",\"statusCode\":\"01\",\"statusDescription\":\"Ok\",\"detailCode\":\"001\",\"detailDescription\":\"Enviado\"}]}"</code></pre>
+<p>Resultado depois da segunda decodificação:</p>
+<pre><code>{
+    "header": null,
+    "messages": [
+        {
+            "to": "5511988776655",
+            "statusCode": "01",
+            "statusDescription": "Ok",
+            "detailCode": "001",
+            "detailDescription": "Enviado"
+        }
+    ]
+}</code></pre>
+<p>Exemplos de decodificação:</p>
+<pre><code>// JavaScript
+const resultado = JSON.parse(JSON.parse(corpo));
+
+# Python
+resultado = json.loads(json.loads(corpo))
+
+// C# (Newtonsoft.Json)
+var json = JsonConvert.DeserializeObject&lt;string&gt;(corpo);
+var resultado = JsonConvert.DeserializeObject&lt;Resposta&gt;(json);</code></pre>
+<h2 id="header-códigos-http">Códigos HTTP <a class="permalink" href="#header-códigos-http" aria-hidden="true">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th>Quando</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>A requisição foi aceita. Confira o resultado de cada mensagem em <code>messages</code>: os erros de mensagem (<code>detailCode</code> 002 a 007, 010 a 013 e 999) também retornam 200.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>A requisição foi recusada por um erro de validação: <code>detailCode</code> 008, 009, 014, 015, 016 ou 021. Também é usado quando o <code>Content-Type</code> não é JSON.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Falha de autenticação: <code>detailCode</code> 017, 018, 019 ou 020, ou header <code>Authorization</code> ausente.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Erro inesperado (veja <strong>Respostas Fora do Padrão</strong>).</td>
+</tr>
+</tbody>
+</table>
+<h1 id="header-respostas-fora-do-padrão">Respostas Fora do Padrão <a class="permalink" href="#header-respostas-fora-do-padrão" aria-hidden="true">¶</a></h1>
+<p>Nos casos abaixo, a resposta <strong>não</strong> segue o formato com <code>header</code> e <code>messages</code>. O corpo é apenas uma mensagem de texto, ou vem vazio:</p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Content-Type</code> diferente de <code>application/json</code></td>
+<td>HTTP 400 com o texto <code>&quot;Invalid content type&quot;</code></td>
+</tr>
+<tr>
+<td>Header <code>Authorization</code> ausente</td>
+<td>HTTP 401 com uma mensagem de texto</td>
+</tr>
+<tr>
+<td>Header <code>Content-Type</code> ausente</td>
+<td>HTTP 500 com uma mensagem de texto</td>
+</tr>
+<tr>
+<td>Alguma mensagem sem o campo <code>to</code></td>
+<td>HTTP 500 com uma mensagem de texto. Nenhuma mensagem da requisição é enviada</td>
+</tr>
+<tr>
+<td>Corpo vazio ou JSON inválido</td>
+<td>Erro HTTP 5xx, sem o corpo padrão</td>
+</tr>
+<tr>
+<td>Falha interna no processamento ou no envio</td>
+<td>HTTP 500 com uma mensagem de texto</td>
+</tr>
+</tbody>
+</table>
+<p>Em caso de erro 500, entre em contato com a <strong>Equipe de Suporte da MOBSIM</strong> antes de reenviar, informando o horário e o <code>groupId</code> da requisição, se houver.</p>
 <h1 id="header-tabela-de-códigos">Tabela de Códigos <a class="permalink" href="#header-tabela-de-códigos" aria-hidden="true">¶</a></h1>
-<p>As requisições à <strong>API</strong> da <strong>MOBSIM</strong> retornarão dois tipos de código. O <code>statusCode</code> e o <code>detailCode</code>. A seguir, veja a lista de códigos fornecidos pela <strong>API</strong>:</p>
+<p>As respostas da <strong>API</strong> da <strong>MOBSIM</strong> trazem dois tipos de código: o <code>statusCode</code> e o <code>detailCode</code>.</p>
 <h2 id="header-statuscode">statusCode <a class="permalink" href="#header-statuscode" aria-hidden="true">¶</a></h2>
 <table>
 <thead>
@@ -107,6 +519,8 @@ Accept:application/json</code></pre>
 <th>Code</th>
 <th>Descrição</th>
 <th>Significado</th>
+<th>Nível</th>
+<th>HTTP</th>
 </tr>
 </thead>
 <tbody>
@@ -114,112 +528,161 @@ Accept:application/json</code></pre>
 <td>001</td>
 <td>Enviado</td>
 <td>A mensagem será enviada</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>002</td>
 <td>Não Enviado</td>
-<td>Número Inválido</td>
+<td>Número inválido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>003</td>
 <td>Não Enviado</td>
-<td>Caractere Excedido</td>
+<td>Caractere excedido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>004</td>
 <td>Não Enviado</td>
-<td>Mensagem Vazia</td>
+<td>Mensagem vazia</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>005</td>
 <td>Não Enviado</td>
 <td>ID duplicado</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>006</td>
 <td>Não Enviado</td>
 <td>ID excedido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>007</td>
 <td>Não Enviado</td>
 <td>ID vazio</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>008</td>
 <td>Não Enviado</td>
 <td>GroupID excedido</td>
+<td>Requisição</td>
+<td>400</td>
 </tr>
 <tr>
 <td>009</td>
 <td>Não Enviado</td>
 <td>GroupID duplicado</td>
+<td>Requisição</td>
+<td>400</td>
 </tr>
 <tr>
 <td>010</td>
 <td>Não Enviado</td>
 <td>Code excedido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>011</td>
 <td>Não Enviado</td>
 <td>Key1 excedido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>012</td>
 <td>Não Enviado</td>
 <td>Key2 excedido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>013</td>
 <td>Não Enviado</td>
 <td>Key3 excedido</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 <tr>
 <td>014</td>
 <td>Não Enviado</td>
-<td>Não há saldo suficiente</td>
+<td>Não há saldo suficiente (subcontas pré-pagas)</td>
+<td>Requisição</td>
+<td>400</td>
 </tr>
 <tr>
 <td>015</td>
 <td>Não Enviado</td>
-<td>Limite de números excedido na requisição</td>
+<td>Limite de 1.000 mensagens por requisição excedido</td>
+<td>Requisição</td>
+<td>400</td>
 </tr>
 <tr>
 <td>016</td>
 <td>Não Enviado</td>
-<td>Não há números válidos na requisição</td>
+<td>Nenhuma mensagem na requisição (lista <code>messages</code> vazia)</td>
+<td>Requisição</td>
+<td>400</td>
 </tr>
 <tr>
 <td>017</td>
 <td>Não Enviado</td>
 <td>Chave de acesso inválida</td>
+<td>Requisição</td>
+<td>401</td>
 </tr>
 <tr>
 <td>018</td>
 <td>Não Enviado</td>
 <td>Subconta inativa</td>
+<td>Requisição</td>
+<td>401</td>
 </tr>
 <tr>
 <td>019</td>
 <td>Não Enviado</td>
 <td>Subconta permanentemente excluída</td>
+<td>Requisição</td>
+<td>401</td>
 </tr>
 <tr>
 <td>020</td>
 <td>Não Enviado</td>
 <td>API inativa</td>
+<td>Requisição</td>
+<td>401</td>
+</tr>
+<tr>
+<td>021</td>
+<td>Não Enviado</td>
+<td>Limite mensal de envios atingido (subcontas pós-pagas)</td>
+<td>Requisição</td>
+<td>400</td>
 </tr>
 <tr>
 <td>999</td>
 <td>Blacklist</td>
-<td>Mensagem Bloqueada</td>
+<td>Mensagem bloqueada</td>
+<td>Mensagem</td>
+<td>200</td>
 </tr>
 </tbody>
 </table>
+<p>Se todos os números de uma requisição forem inválidos, a requisição é aceita (HTTP 200) e cada mensagem recebe o <code>detailCode 002</code>. O <code>detailCode 016</code> só é usado quando a lista <code>messages</code> está vazia.</p>
 <h1 id="header-tabela-de-status">Tabela de Status <a class="permalink" href="#header-tabela-de-status" aria-hidden="true">¶</a></h1>
-<p>Abaixo está a relação dos status que os números enviados para as operadoras apresentam. Estes status são fornecidos exclusivamente pelas operadoras e repassados pela <strong>MOBSIM</strong>:</p>
-<h2 id="header-status-do-sms">Status do SMS <a class="permalink" href="#header-status-do-sms" aria-hidden="true">¶</a></h2>
+<p>Abaixo está a relação dos status que os números enviados para as operadoras apresentam. Estes status são fornecidos exclusivamente pelas operadoras e repassados pela <strong>MOBSIM</strong> no <em>callback</em> de status:</p>
 <table>
 <thead>
 <tr>
@@ -246,7 +709,11 @@ Accept:application/json</code></pre>
 </tr>
 </tbody>
 </table>
-<section id="métodos-da-api" class="resource-group"><h2 class="group-heading">Métodos da API <a href="#métodos-da-api" class="permalink">&para;</a></h2><div id="métodos-da-api-envio-múltiplo-de-sms" class="resource"><h3 class="resource-heading">Envio Múltiplo de SMS <a href="#métodos-da-api-envio-múltiplo-de-sms" class="permalink">&nbsp;&para;</a></h3><div id="métodos-da-api-envio-múltiplo-de-sms-post" class="action post"><h4 class="action-heading"><div class="name">Testar envio de SMS Múltiplo</div><a href="#métodos-da-api-envio-múltiplo-de-sms-post" class="method post">POST</a><code class="uri">/sms</code></h4><p>Faça o envio de 1 ou até 1.000 SMS ao mesmo tempo utilizando o método de <strong>Envios Múltiplos</strong> da <strong>API</strong> da <strong>MOBSIM</strong>.</p>
+<h1 id="header-limites-de-uso">Limites de Uso <a class="permalink" href="#header-limites-de-uso" aria-hidden="true">¶</a></h1>
+<ul>
+<li><strong>Requisições Simultâneas</strong></li>
+</ul>
+<p>Solicitamos que sejam feitas, no máximo, <strong>10 requisições simultâneas</strong> (<em>threads</em>) para a aplicação da <strong>MOBSIM</strong> com um espaçamento de <strong>10 segundos por requisição</strong>.</p>
 <ul>
 <li><strong>Velocidade e Capacidade de Envio</strong></li>
 </ul>
@@ -254,118 +721,80 @@ Accept:application/json</code></pre>
 <p>Recomendamos que haja um espaçamento de 15 segundos a cada lote de 25 <em>threads</em> de 1.000 números, ou seja, 100.000 SMS/minuto.</p>
 <p>Chamadas individuais, com apenas 1 número por requisição, recomendamos que sejam feitas até 1.500 <em>threads</em> por minuto.</p>
 <ul>
-<li><strong>Estrutura da Requisição</strong></li>
-</ul>
-<p>Neste método é possível incluir uma mensagem diferente para cada número ou enviar a mesma mensagem para vários números ao mesmo tempo.</p>
-<p>Este método recebe um objeto <strong>JSON</strong> conforme o exemplo abaixo:</p>
-<pre><code>
-        {
-            "groupId": "90f93d5c-6ad1-44af",
-            "groupMsg": "",
-            "messages": [
-            {
-                "id": "90f93d5c-6ad1-44af",
-                "code": "MeuID_20-05-2018_1",
-                "key1": "41177319923",
-                "to": "11988776655",
-                "msg": "Mensagem da MOBSIM 1"
-            },
-            {
-                "id": "90f93d5c-6ad1-77af",
-                "code": "MeuID_20-05-2018_2",
-                "key1": "41177319923",
-                "to": "11988776644",
-                "msg": "Mensagem da MOBSIM 2"
-            },
-            {
-                "id": "90f93d5c-6ad1-55af",
-                "code": "MeuID_20-05-2018_3",
-                "key1": "41177319923",
-                "to": "11988776633",
-                "msg": "Mensagem da MOBSIM 3"
-            }]
-        }
-<br/></pre></code>
-<p>No corpo do <strong>JSON</strong>, no início da requisição, existem dois parâmetros opcionais que influenciam na lista de números. Confira a seguir:</p>
-<ul>
-<li><strong>Parâmetro “groupId”</strong></li>
-</ul>
-<p>A utilização do parâmetro <code>groupId</code> para identificação de requisições é opcional. Ele serve para identificar e agrupar várias requisições distintas.</p>
-<ul>
-<li><strong>Parâmetro “groupMsg”</strong></li>
-</ul>
-<p>O parâmetro <code>groupMsg</code> é o campo da mensagem do SMS. Este parâmetro serve para replicar a mesma mensagem a todos os números da lista.</p>
-<p>Se os números da lista estiverem com o campo <code>msg</code> vazio, o sistema assumirá como padrão a mensagem armazenada neste parâmetro inicial.</p>
-<p>Se ambos os parâmetros forem preenchidos, o sistema ignorará o parâmetro inicial e assumirá apenas os campos da lista.</p>
-<ul>
 <li><strong>Tempo de Resposta da Requisição</strong></li>
 </ul>
-<p>O tempo de resposta de cada requisição varia conforme o fluxo de mensagens trafegados pela <strong>MOBSIM</strong>. Datas especiais, comemorativas ou horários de pico costumam ter um tempo maior de processamento das requisições.</p>
-<p>Embora o tempo médio possa variar entre 5 e 30 segundos, há casos que o tempo de resposta ultrapassa o tempo <em>default</em> de 60 segundos para <em>time-out</em>.</p>
+<p>O tempo de resposta de cada requisição varia conforme o fluxo de mensagens trafegadas pela <strong>MOBSIM</strong>. Datas especiais, comemorativas ou horários de pico costumam ter um tempo maior de processamento das requisições.</p>
+<p>Embora o tempo médio possa variar entre 5 e 30 segundos, há casos em que o tempo de resposta ultrapassa o tempo <em>default</em> de 60 segundos para <em>time-out</em>.</p>
 <p>Ou seja, o seu sistema precisa estar preparado para aguardar o nosso tempo de resposta. Solicitamos que seja configurado um <em>time-out</em> de até <strong>300 segundos</strong> (5 minutos) para retorno de cada requisição.</p>
-<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">https://mobsim-api.com.br</span>/sms</span></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+<section id="métodos-da-api" class="resource-group"><h2 class="group-heading">Métodos da API <a href="#métodos-da-api" class="permalink">&para;</a></h2><div id="métodos-da-api-envio-múltiplo-de-sms" class="resource"><h3 class="resource-heading">Envio Múltiplo de SMS <a href="#métodos-da-api-envio-múltiplo-de-sms" class="permalink">&nbsp;&para;</a></h3><div id="métodos-da-api-envio-múltiplo-de-sms-post" class="action post"><h4 class="action-heading"><div class="name">Enviar SMS</div><a href="#métodos-da-api-envio-múltiplo-de-sms-post" class="method post">POST</a><code class="uri">/sms</code></h4><p>Envia de 1 a 1.000 SMS em uma única requisição. É possível incluir uma mensagem diferente para cada número ou enviar a mesma mensagem para vários números com o <code>groupMsg</code>.</p>
+<p>Veja as seções <strong>Requisição</strong>, <strong>Resposta</strong> e <strong>Tabela de Códigos</strong> para as regras completas.</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">https://mobsim-api.com.br</span>/sms</span></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</span><br><span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">groupId</span>": <span class="hljs-value"><span class="hljs-string">"90f93d5c-6ad1-454af-90f93d5c"</span></span>,
-  "<span class="hljs-attribute">groupMsg</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
+  "<span class="hljs-attribute">groupMsg</span>": <span class="hljs-value"><span class="hljs-string">"Hello, world!"</span></span>,
   "<span class="hljs-attribute">messages</span>": <span class="hljs-value">[
     {
       "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"90f93d5c-6ad1-44af-90f93d5c"</span></span>,
       "<span class="hljs-attribute">to</span>": <span class="hljs-value"><span class="hljs-string">"11988776655"</span></span>,
-      "<span class="hljs-attribute">msg</span>": <span class="hljs-value"><span class="hljs-string">"Mensagem da MOBSIM 1"</span>
-    </span>},
-    {
-      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"90f93d5c-6ad1-77af-90f93d5c"</span></span>,
-      "<span class="hljs-attribute">to</span>": <span class="hljs-value"><span class="hljs-string">"11988776644"</span></span>,
-      "<span class="hljs-attribute">msg</span>": <span class="hljs-value"><span class="hljs-string">"Mensagem da MOBSIM 2"</span>
-    </span>},
-    {
-      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"90f93d5c-6ad1-55af-90f93d5c"</span></span>,
-      "<span class="hljs-attribute">to</span>": <span class="hljs-value"><span class="hljs-string">"11988776633"</span></span>,
-      "<span class="hljs-attribute">msg</span>": <span class="hljs-value"><span class="hljs-string">"Mensagem da MOBSIM 3"</span>
+      "<span class="hljs-attribute">msg</span>": <span class="hljs-value"><span class="hljs-string">"Mensagem da MOBSIM 1"</span></span>,
+      "<span class="hljs-attribute">code</span>": <span class="hljs-value"><span class="hljs-string">"Hello, world!"</span></span>,
+      "<span class="hljs-attribute">key1</span>": <span class="hljs-value"><span class="hljs-string">"Hello, world!"</span></span>,
+      "<span class="hljs-attribute">key2</span>": <span class="hljs-value"><span class="hljs-string">"Hello, world!"</span></span>,
+      "<span class="hljs-attribute">key3</span>": <span class="hljs-value"><span class="hljs-string">"Hello, world!"</span>
     </span>}
   ]
-</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
-  "<span class="hljs-attribute">StatusCode</span>": <span class="hljs-value"><span class="hljs-number">200</span></span>,
-  "<span class="hljs-attribute">Headers</span>": <span class="hljs-value">{
-    "<span class="hljs-attribute">Content-Type</span>": <span class="hljs-value"><span class="hljs-string">"application/json"</span></span>,
-    "<span class="hljs-attribute">Access-Control-Allow-Origin</span>": <span class="hljs-value"><span class="hljs-string">"*"</span>
+</span>}</code></pre><div style="height: 1px;"></div><h5>Schema</h5><pre><code>{
+  "<span class="hljs-attribute">$schema</span>": <span class="hljs-value"><span class="hljs-string">"http://json-schema.org/draft-04/schema#"</span></span>,
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"object"</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">groupId</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Identificador único da requisição. Até 100 caracteres."</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">groupMsg</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"string"</span></span>,
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"Mensagem padrão, usada nas mensagens que vierem sem `msg`."</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">messages</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"array"</span></span>,
+      "<span class="hljs-attribute">description</span>": <span class="hljs-value"><span class="hljs-string">"De 1 a 1.000 mensagens."</span>
+    </span>}
   </span>}</span>,
-  "<span class="hljs-attribute">Body</span>": <span class="hljs-value"><span class="hljs-string">"\"{\\\"header\\\":null,\\\"messages\\\":[{\\\"to\\\":\\\"5511988776655\\\",\\\"statusCode\\\":\\\"01\\\",\\\"statusDescription\\\":\\\"Ok\\\",\\\"detailCode\\\":\\\"001\\\",\\\"detailDescription\\\":\\\"Enviado\\\"}]}\""</span></span>,
-  "<span class="hljs-attribute">IsBase64Encoded</span>": <span class="hljs-value"><span class="hljs-literal">false</span>
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="callbacks-da-api" class="resource-group"><h2 class="group-heading">Callbacks da API <a href="#callbacks-da-api" class="permalink">&para;</a></h2><p>A <strong>API SMS</strong> da <strong>MOBSIM</strong> pode realizar <em>callbacks</em> diretamente para o seu sistema retornando os status de entrega das mensagens enviadas ou informações sobre os SMS respondidos (MO) de seus usuários.</p>
-<h1 id="header-callback-de-status">Callback de Status <a class="permalink" href="#header-callback-de-status" aria-hidden="true">¶</a></h1>
-<p>O sistema da <strong>MOBSIM</strong> envia ao seu sistema de forma automatizada e em tempo real os status dos SMS enviados (confira os tipos de status na seção “Tabela de Status”).</p>
-<p>Para tal é necessário configurar uma URL (<em>endpoint</em>) no sistema da <strong>MOBSIM</strong>. Solicite essa configuração para a <strong>Equipe de Suporte da MOBSIM</strong> ou ao seu Gerente Comercial (<a href="mailto:contato@mobsim.com.br">contato@mobsim.com.br</a>).</p>
-<p>Confira abaixo um exemplo de <em>callback</em>:</p>
-<pre><code>
-        {
-           "id": "90f93d5c-6ad1-55af",
-           "number": "5511988776633",
-           "status": "Entregue",
-           "code": null,
-           "key1": null,
-           "key2": null,
-           "key3": null
-        }
-<br/></pre></code>
-<p><strong>Importante</strong>: Campos não preenchidos no momento da requisição serão retornados vazios (<em>null</em>) e o seu sistema deve estar preparado para tratar essas informações.</p>
-<h1 id="header-callback-de-respostas">Callback de Respostas <a class="permalink" href="#header-callback-de-respostas" aria-hidden="true">¶</a></h1>
-<p>O sistema da <strong>MOBSIM</strong> envia ao seu sistema de forma automatizada e em tempo real os SMS respondidos (MO) pelos usuários (esta funcionalidade é utilizada, por exemplo, para opção de <em>opt-out</em>, dúvidas, reclamações, enquetes, SAC, pesquisas, confirmações de visita, etc).</p>
-<p>Para tal é necessário configurar uma URL (<em>endpoint</em>) no sistema da <strong>MOBSIM</strong>. Solicite essa configuração para a <strong>Equipe de Suporte da MOBSIM</strong> ou ao seu Gerente Comercial (<a href="mailto:contato@mobsim.com.br">contato@mobsim.com.br</a>).</p>
-<p>Confira abaixo um exemplo de <em>callback</em>:</p>
-<pre><code>
-        {
-           "id": "90f93d5c-6ad1-55af",
-           "number": "5511988776633",
-           "message": "Resposta do Usuário",
-           "date": "2022-04-05 10:27:28",
-           "code": null,
-           "key1": null,
-           "key2": null,
-           "key3": null
-        }
-<br/></pre></code>
-<p><strong>Importante</strong>: Campos não preenchidos no momento da requisição serão retornados vazios (<em>null</em>) e o seu sistema deve estar preparado para tratar essas informações.</p>
-</section></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 19 Aug 2026</p><script>/* eslint-env browser */
+  "<span class="hljs-attribute">required</span>": <span class="hljs-value">[
+    <span class="hljs-string">"messages"</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Requisição aceita. A primeira e a terceira mensagens foram aceitas para envio. A segunda foi recusada por ser um telefone fixo (<code>detailCode 002</code>). O corpo é uma string JSON que precisa ser decodificada duas vezes (veja <strong>Decodificação da resposta</strong>).</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code><span class="hljs-string">"{\"header\":null,\"messages\":[{\"to\":\"5511988776655\",\"statusCode\":\"01\",\"statusDescription\":\"Ok\",\"detailCode\":\"001\",\"detailDescription\":\"Enviado\"},{\"to\":\"5511933334444\",\"statusCode\":\"02\",\"statusDescription\":\"Falha\",\"detailCode\":\"002\",\"detailDescription\":\"Não enviado\"},{\"to\":\"5511988776633\",\"statusCode\":\"01\",\"statusDescription\":\"Ok\",\"detailCode\":\"001\",\"detailDescription\":\"Enviado\"}]}"</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>400</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Requisição recusada: mais de 1.000 mensagens (<code>detailCode 015</code>). Nenhuma mensagem foi enviada.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code><span class="hljs-string">"{\"header\":{\"statusCode\":\"02\",\"statusDescription\":\"Falha\",\"detailCode\":\"015\",\"detailDescription\":\"Não enviado\"},\"messages\":null}"</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>401</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Requisição recusada: chave de acesso inválida (<code>detailCode 017</code>). Nenhuma mensagem foi enviada.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code><span class="hljs-string">"{\"header\":{\"statusCode\":\"02\",\"statusDescription\":\"Falha\",\"detailCode\":\"017\",\"detailDescription\":\"Não enviado\"},\"messages\":null}"</span></code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="callbacks-da-api" class="resource-group"><h2 class="group-heading">Callbacks da API <a href="#callbacks-da-api" class="permalink">&para;</a></h2><p>A <strong>API SMS</strong> da <strong>MOBSIM</strong> pode realizar <em>callbacks</em> diretamente para o seu sistema, retornando os status de entrega das mensagens enviadas ou os SMS respondidos (MO) pelos seus usuários.</p>
+<p>Para receber os <em>callbacks</em>, é necessário configurar uma URL (<em>endpoint</em>) no sistema da <strong>MOBSIM</strong>. Solicite essa configuração para a <strong>Equipe de Suporte da MOBSIM</strong> ou ao seu Gerente Comercial (<a href="mailto:contato@mobsim.com.br">contato@mobsim.com.br</a>).</p>
+<h2 id="header-callback-de-status">Callback de Status <a class="permalink" href="#header-callback-de-status" aria-hidden="true">¶</a></h2>
+<p>O sistema da <strong>MOBSIM</strong> envia ao seu sistema, de forma automatizada e em tempo real, os status dos SMS enviados (confira os status na seção <strong>Tabela de Status</strong>).</p>
+<p>Exemplo de <em>callback</em>:</p>
+<pre><code>{
+    "id": "90f93d5c-6ad1-55af",
+    "number": "5511988776633",
+    "status": "Entregue",
+    "code": null,
+    "key1": null,
+    "key2": null,
+    "key3": null
+}</code></pre>
+<p><strong>Importante</strong>: Campos não preenchidos no momento da requisição serão retornados vazios (<em>null</em>), e o seu sistema deve estar preparado para tratar essas informações.</p>
+<h2 id="header-callback-de-respostas">Callback de Respostas <a class="permalink" href="#header-callback-de-respostas" aria-hidden="true">¶</a></h2>
+<p>O sistema da <strong>MOBSIM</strong> envia ao seu sistema, de forma automatizada e em tempo real, os SMS respondidos (MO) pelos usuários. Essa funcionalidade é usada, por exemplo, para <em>opt-out</em>, dúvidas, reclamações, enquetes, SAC, pesquisas e confirmações de visita.</p>
+<p>Exemplo de <em>callback</em>:</p>
+<pre><code>{
+    "id": "90f93d5c-6ad1-55af",
+    "number": "5511988776633",
+    "message": "Resposta do Usuário",
+    "date": "2022-04-05 10:27:28",
+    "code": null,
+    "key1": null,
+    "key2": null,
+    "key3": null
+}</code></pre>
+<p><strong>Importante</strong>: Campos não preenchidos no momento da requisição serão retornados vazios (<em>null</em>), e o seu sistema deve estar preparado para tratar essas informações.</p>
+</section></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 29 Oct 2026</p><script>/* eslint-env browser */
 /* eslint quotes: [2, "single"] */
 'use strict';
 
