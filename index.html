@@ -22,7 +22,7 @@
 <h1 id="header-autenticação">Autenticação <a class="permalink" href="#header-autenticação" aria-hidden="true">¶</a></h1>
 <p>Todas as requisições à <strong>API SMS</strong> devem incluir uma chave de acesso gerada no momento da criação da conta no sistema da <strong>MOBSIM</strong>. Consulte a <strong>Equipe de Suporte da MOBSIM</strong> ou o seu Gerente Comercial para obter suas credenciais (<a href="mailto:suporte@mobsim.com.br">suporte@mobsim.com.br</a>).</p>
 <p>A chave de acesso deve ser enviada no header <code>Authorization</code>, precedida de <code>Basic</code>, exatamente como foi fornecida:</p>
-<pre><code>Authorization: Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</code></pre>
+<pre><code>Authorization: Basic <SUA_CHAVE_DE_ACESSO></code></pre>
 <p>Erros de autenticação retornam <strong>HTTP 401</strong> e recusam a requisição inteira:</p>
 <table>
 <thead>
