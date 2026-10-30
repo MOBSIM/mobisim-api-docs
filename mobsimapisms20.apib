@@ -28,7 +28,7 @@ Todas as requisições à **API SMS** devem incluir uma chave de acesso gerada n
 
 A chave de acesso deve ser enviada no header `Authorization`, precedida de `Basic `, exatamente como foi fornecida:
 
-<pre><code>Authorization: Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D</code></pre>
+<pre><code>Authorization: Basic &lt;SUA_CHAVE_DE_ACESSO&gt;</code></pre>
 
 Erros de autenticação retornam **HTTP 401** e recusam a requisição inteira:
 
@@ -392,7 +392,7 @@ Veja as seções **Requisição**, **Resposta** e **Tabela de Códigos** para as
 
     + Headers
 
-            Authorization: Basic Y29udGE6c2VuaGEEGXTPcyozWmaIKc6D
+            Authorization: Basic <SUA_CHAVE_DE_ACESSO>
             Accept: application/json
 
     + Attributes (object)
